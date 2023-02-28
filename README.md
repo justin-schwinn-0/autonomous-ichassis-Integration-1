@@ -67,4 +67,19 @@ Already up to date.
 
 ```
 git push origin contributing
+Username for 'https://github.com': NoahC77
+Password for 'https://NoahC77@github.com': 
+Enumerating objects: 11, done.
+Counting objects: 100% (11/11), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (6/6), done.
+Writing objects: 100% (9/9), 1.66 KiB | 340.00 KiB/s, done.
+Total 9 (delta 2), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (2/2), done.
+remote: 
+remote: Create a pull request for 'contributing' on GitHub by visiting:
+remote:      https://github.com/NoahC77/autonomous-ichassis/pull/new/contributing
+remote: 
+To https://github.com/NoahC77/autonomous-ichassis.git
+ * [new branch]      contributing -> contributing
 ```
