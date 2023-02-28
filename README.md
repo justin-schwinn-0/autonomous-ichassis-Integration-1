@@ -34,14 +34,37 @@ origin	https://github.com/NoahC77/autonomous-ichassis.git (push)
 git remote add upstream https://github.com/AutonomousiChassis/autonomous-ichassis.git
 
 git remote -v
+origin  https://github.com/NoahC77/autonomous-ichassis.git (fetch)
+origin  https://github.com/NoahC77/autonomous-ichassis.git (push)
 upstream	https://github.com/AutonomousiChassis/autonomous-ichassis.git (fetch)
 upstream	https://github.com/AutonomousiChassis/autonomous-ichassis.git (push)
-
-
 ```
 
-5. Now that upstream is setup, ensure you are in your forked local main branch and do the following to bring your local main branch up to date with the main repository.
+5. Now that upstream is setup, ensure you are in your local main branch and do the following to bring your local main branch up to date with the upstream main repository. Remember in this case it should be AutonomousiChassis/autonomous-ichassis.
 
 ```
 git pull upstream main
+Username for 'https://github.com': NoahC77
+Password for 'https://NoahC77@github.com': 
+From https://github.com/AutonomousiChassis/autonomous-ichassis
+ * branch            main       -> FETCH_HEAD
+ * [new branch]      main       -> upstream/main
+Already up to date.
+```
+
+6. Your local main branch is now up to date with the upstream main branch. To update your local non-main branch with the new changes in your local main branch checkout the non main branch and merge it with main. This will not change main.
+
+```
+git checkout contributing
+Switched to branch 'contributing'
+
+
+git merge main
+Already up to date.
+```
+
+7. Finally in order to merge your changes with the upstream main repository and make changes to the end product, push your non-main local branch to your forked github repository. Once this is done you will submit a merge request using the UI. Request to merge your forked github branch with the upstream main branch.
+
+```
+git push origin contributing
 ```
