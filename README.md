@@ -40,4 +40,8 @@ upstream	https://github.com/AutonomousiChassis/autonomous-ichassis.git (push)
 
 ```
 
-5. 
+5. Now that upstream is setup, ensure you are in your forked local main branch and do the following to bring your local main branch up to date with the main repository.
+
+```
+git pull upstream main
+```
