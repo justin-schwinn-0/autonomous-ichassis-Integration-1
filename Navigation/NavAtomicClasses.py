@@ -4,12 +4,17 @@ class Node:
         self.X = X
         self.Y = Y
         self.label = label
-        self.connections = {}
-        pass
+        self.connections = []
+
+    def addConnection(self, index):
+        if(index not in self.connections):
+            self.connections.append(index)
+        
+    def ConnectionsList(self):
+        return self.connections
 
         #STR format is type(char) | float x | float y | name \n
     def toStr(self) -> str:
-        
         return  self.type +"|"+ str(self.X) +"|"+ str(self.Y) +"|"+ self.label
  
 
@@ -18,14 +23,6 @@ def FromStr(line:str):
     n = Node(t,float(x),float(y),l)
     return n
     
-
-    
-class Path:
-    def __init__(self,A:Node,B:Node) -> None:
-        self.A = A
-        self.B = B
-        pass
-
 if __name__ == "__main__":
     t = 'c'
     x = 0.4
