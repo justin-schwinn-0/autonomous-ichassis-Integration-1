@@ -15,18 +15,18 @@ class NavGraph:
         pass
 
     def PathFromAtoB(self, A ,B):
-        distances = PathingData(self.Nodes)
-        distances.getFullDistances(StartingFrom=B)
+        distances = PathingData(self.Nodes).getFullDistances(StartingFrom=B)
         currentDist = distances[A]
         e = A
 
         path = [A]
 
         while e != B:
-            connected = self.nodes[e].ConnectionsList()
+            connected = self.Nodes[e].ConnectionsList()
             for i in connected:
                 if(distances[i] == currentDist-1):
                     e = i
+                    currentDist -=1
                     path.append(e)
         return path
         
