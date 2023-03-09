@@ -18,7 +18,7 @@ class Node:
         return  self.type +"|"+ str(self.X) +"|"+ str(self.Y) +"|"+ self.label
  
 
-def FromStr(line:str):
+def NodeFromStr(line:str):
     [t,x,y,l] = line.split("|")
     n = Node(t,float(x),float(y),l)
     return n
