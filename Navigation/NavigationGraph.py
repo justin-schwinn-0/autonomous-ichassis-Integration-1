@@ -58,9 +58,12 @@ class PathingData:
     
     def DoVisit(self):
         index = self.nodeQueue.pop(0)
-        min_ConnectedDist = min(self.Distances[self.Nodes[index].ConnectionsList()])
+        distToCheck = []
+        for i in self.Nodes[index].ConnectionsList():
+            distToCheck.append(self.Distances[i])
+        min_ConnectedDist = min(distToCheck)
         self.Distances[index] = min_ConnectedDist + 1
-        self.EnqueueVisits(index)
+        self.EnqueueVisits(self.Nodes[index].ConnectionsList())
 
     def getFullDistances(self,StartingFrom:int):
         self.StartAt(StartingFrom)
@@ -73,7 +76,7 @@ class PathingData:
 
 
 if __name__ == "__main__":
-    nodes =[Node("x",0.1,0.5,str(-1))]
+    nodes =[]
 
     for i in range(11):
         nodes.append(Node("x",i+0.1,i+0.5,str(i)))
@@ -82,18 +85,18 @@ if __name__ == "__main__":
 
     graph.setNodes(nodes)
 
-    graph.AddPaths(1,[2,5])
-    graph.AddPaths(2,[1,3,4])
-    graph.AddPaths(3,[2,9])
-    graph.AddPaths(4,[2,6,8])
-    graph.AddPaths(5,[1,6])
-    graph.AddPaths(6,[4,7,5])
-    graph.AddPaths(7,[6,8])
-    graph.AddPaths(8,[4,7,9,10])
-    graph.AddPaths(9,[3,8])
-    graph.AddPaths(10,[8,11])
-    graph.AddPaths(11,[10]) 
+    graph.AddPaths(0,[1,4])
+    graph.AddPaths(1,[0,2,3])
+    graph.AddPaths(2,[1,8])
+    graph.AddPaths(3,[1,5,7])
+    graph.AddPaths(4,[0,5])
+    graph.AddPaths(5,[3,6,4])
+    graph.AddPaths(6,[5,7])
+    graph.AddPaths(7,[3,6,8,9])
+    graph.AddPaths(8,[2,7])
+    graph.AddPaths(9,[7,10])
+    graph.AddPaths(10,[9]) 
 
-    print(graph.PathFromAtoB(1,11))  
+    print(graph.PathFromAtoB(0,10))  
 
     pass    
