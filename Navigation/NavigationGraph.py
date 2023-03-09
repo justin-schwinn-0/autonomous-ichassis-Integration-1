@@ -1,4 +1,6 @@
 from NavAtomicClasses import Node
+import timeit
+
 class NavGraph:
     def __init__(self) -> None:
         self.Nodes = []
@@ -30,7 +32,6 @@ class NavGraph:
                     path.append(e)
         return path
         
-
 class PathingData:
 
     def __init__(self,nodes) -> None:
@@ -97,6 +98,6 @@ if __name__ == "__main__":
     graph.AddPaths(9,[7,10])
     graph.AddPaths(10,[9]) 
 
-    print(graph.PathFromAtoB(0,10))  
+    print(graph.PathFromAtoB(0,10))
 
     pass    
