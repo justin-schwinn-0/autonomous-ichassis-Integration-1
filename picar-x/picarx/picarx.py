@@ -177,7 +177,26 @@ class Picarx(object):
                 self.set_motor_speed(2, -1*speed )
         else:
             self.set_motor_speed(1, speed)
-            self.set_motor_speed(2, -1*speed)                  
+            self.set_motor_speed(2, -1*speed)
+
+    # This is the code for the left turn. Currently needs testing. I'm hoping we'll get a sharper turn
+    # by only using the outer motor (in this case the right motor) and adjusting the direction servos angle
+    # but it will need further testing to ensure perfection.
+    def leftTurn(self):
+        self.set_dir_servo_angle(30)
+        self.set_motor_speed(1, 30)
+        time.sleep(.25)
+        self.stop()
+        self.set_dir_servo_angle(0)
+    
+    # This is the function to turn right. It uses the same logic as the previous function and will need some
+    # testing to ensure functionality.
+    def rightTurn(self):
+        self.set_dir_servo_angle(-30)
+        self.set_motor_speed(2, 30)
+        time.sleep(.25)
+        self.stop()
+        self.set_dir_servo_angle(0)                  
 
     def stop(self):
         self.set_motor_speed(1, 0)
