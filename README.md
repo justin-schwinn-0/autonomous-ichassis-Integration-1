@@ -4,8 +4,8 @@ The master deliverable repository for the autonomous iChassis.
 # Mini Teams
 - UI: 
 - Navigation: Noah
-- Obstacle Detection: Noah
-- Hardware:
+- Obstacle Detection: Noah, Wyatt
+- Hardware: Wyatt
 
 # Contributing
 There is a specific workflow necessary to contribute to the autonomous-ichassis main repository.
@@ -89,4 +89,3 @@ remote:
 To https://github.com/NoahC77/autonomous-ichassis.git
  * [new branch]      contributing -> contributing
 ```
-Wyatt K.
