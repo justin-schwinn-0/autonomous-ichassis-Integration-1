@@ -1,7 +1,8 @@
 # Used for input processing
-import pygame
-from pygame.locals import *
+#import pygame
+#from pygame.locals import *
 import time
+import readchar
 # Importing our Picarx object library
 from picarx import Picarx
 
@@ -16,24 +17,49 @@ def print_welcome():
     print("A: Left")
     print("S: Backward")
     print("D: Right")
-    print("C: To quit")
+    print("E: Stop")
+    print("ESC: To quit")
 
 # This is the main driver function
 if __name__ == "__main__":
     # Initialize our Picarx object
     rpichassis = Picarx()
     # Initialize our pygame:
-    pygame.init()
-    screen = pygame.display.set_mode((240, 240))
-    pygame.display.set_caption('RPi Chassis')
+    #pygame.init()
+    #screen = pygame.display.set_mode((240, 240))
+    #pygame.display.set_caption('RPi Chassis')
     # Print the welcome message to the user
     print_welcome()
     
     # Our inifinite while loop (until user exits)
     while True:
         # Sleep to slightly delay input
-        time.sleep(.02)
-        
+        #time.sleep(.02)
+
+        key = readchar.readkey()
+        key = key.lower()
+
+        if key in('wasde'):
+            if 'w' == key:
+                rpichassis.forward(50)
+            elif 's' == key:
+                rpichassis.backward(50)
+            elif 'a' == key:
+                rpichassis.leftTurn()
+            elif 'd' == key:
+                rpichassis.rightTurn()
+            elif 'e' == key:
+                rpichassis.stop()
+            sleep(0.05)
+            show_info()
+        elif key == readchar.key.CTRL_C or key in readchar.key.ESCAPE_SEQUENCES:
+            rpichassis.stop()
+            print("\n Quit")
+            break
+
+        sleep(0.02)
+
+        '''   
         # Get the user input using pygame
         for event in pygame.event.get():
             # If the event is a pressed key
@@ -63,3 +89,4 @@ if __name__ == "__main__":
                     # Move chassis right
                     repichassis.rightTurn()
                 
+        '''
