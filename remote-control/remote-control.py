@@ -50,14 +50,15 @@ if __name__ == "__main__":
                 rpichassis.rightTurn()
             elif 'e' == key:
                 rpichassis.stop()
-            sleep(0.05)
-            show_info()
+
+            time.sleep(.05)
+
         elif key == readchar.key.CTRL_C or key in readchar.key.ESCAPE_SEQUENCES:
             rpichassis.stop()
             print("\n Quit")
             break
 
-        sleep(0.02)
+        time.sleep(.02)
 
         '''   
         # Get the user input using pygame
