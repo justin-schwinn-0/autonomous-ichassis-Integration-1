@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
-# '''
+print('Please run under desktop environment (eg: vnc) to display the image window')
+
+'''
 # We have integrated the camera-related functions into the vilb library,
 # you can use the following code to achieve the same functionality.
 
@@ -32,8 +34,9 @@ def main():
 if __name__ == "__main__":
     main()
 
-# '''
 '''
+
+
 import cv2
 from picamera.array import PiRGBArray
 from picamera import PiCamera
@@ -80,4 +83,3 @@ with PiCamera() as camera:
     cv2.destroyAllWindows()
     camera.close()  
      
-'''

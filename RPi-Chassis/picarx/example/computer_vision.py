@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+print('Please run under desktop environment (eg: vnc) to display the image window')
+
 '''
 # We have integrated the camera-related functions into the vilb library,
 # you can use the following code to achieve the same functionality.
