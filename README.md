@@ -2,8 +2,8 @@
 The master deliverable repository for the autonomous iChassis.
 
 # Mini Teams
-- UI:
-- Navigation: Justin, Noah
+- UI: Fernando, Dan
+- Navigation: Justin, Noah, Dan
 - Obstacle Detection: Bridgette, Noah, Wyatt
 - Hardware: Bridgette, Wyatt
 
