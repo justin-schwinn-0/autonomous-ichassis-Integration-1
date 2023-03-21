@@ -2,10 +2,10 @@
 The master deliverable repository for the autonomous iChassis.
 
 # Mini Teams
-- UI: 
+- UI:
 - Navigation: Justin, Noah
-- Obstacle Detection: Noah
-- Hardware:
+- Obstacle Detection: Bridgette, Noah, Wyatt
+- Hardware: Bridgette, Wyatt
 
 # Contributing
 There is a specific workflow necessary to contribute to the autonomous-ichassis main repository.
@@ -88,4 +88,14 @@ remote:      https://github.com/NoahC77/autonomous-ichassis/pull/new/contributin
 remote: 
 To https://github.com/NoahC77/autonomous-ichassis.git
  * [new branch]      contributing -> contributing
-```
+ ```
+
+# Notes on Developing:
+1. Please make sure your code has been throughly tested (edge cases)!
+2. Please make sure you have pulled from the main Repo before you attempt to Push to it (retest code if neccessary!).
+3. Be very careful resolving conflicts, message other team members as needed to resolve them.
+4. Have supplimentary comments throughout your code. They should answer questions:
+- What is this doing?
+- How is it doing it?
+- Why is it doing it this way?
+5. Always reach out to a teammate for help as needed. If you need to better understand their code, if you are stuck, or if you just need advise.
