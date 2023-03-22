@@ -1,47 +1,59 @@
+#! /usr/bin/python
 import time
+import smbus
 import signal
 import sys
-import pigpio
-
+BUS = None
 address = 0x42
 gpsReadInterval = 0.03
-SDA=2
-SCL=3
-pi = pigpio.pi()
-pi.set_pull_up_down(SDA, pigpio.PUD_UP)
-pi.set_pull_up_down(SCL, pigpio.PUD_UP)
-pi.bb_i2c_open(SDA,SCL,100000)
-'''
-def handle_ctrl_c(signal, frame):
-	pi.bb_i2c_close(SDA)
-	pi.stop()
-	sys.exit(130)
 
-# This will capture exit when using CTRL-C
+def connectBus():
+    global BUS
+    BUS = smbus.SMBus(1)
+
+def parseResponse(gpsLine):
+  if(gpsLine.count(36) == 1):                           # Check #1, make sure '$' doesnt appear twice
+    if len(gpsLine) < 84:                               # Check #2, 83 is maximun NMEA sentenace length.
+        CharError = 0;
+        for c in gpsLine:                               # Check #3, Make sure that only readiable ASCII charaters and Carriage Return are seen.
+            if (c < 32 or c > 122) and  c != 13:
+                CharError+=1
+        if (CharError == 0):#    Only proceed if there are no errors.
+            gpsChars = ''.join(chr(c) for c in gpsLine)
+            if (gpsChars.find('txbuf') == -1):          # Check #4, skip txbuff allocation error
+                gpsStr, chkSum = gpsChars.split('*',2)  # Check #5 only split twice to avoid unpack error
+                gpsComponents = gpsStr.split(',')
+                chkVal = 0
+                for ch in gpsStr[1:]: # Remove the $ and do a manual checksum on the rest of the NMEA sentence
+                     chkVal ^= ord(ch)
+                if (chkVal == int(chkSum, 16)): # Compare the calculated checksum with the one in the NMEA sentence
+                     print(str(gpsChars))
+
+def handle_ctrl_c(signal, frame):
+        sys.exit(130)
+
+#This will capture exit when using Ctrl-C
 signal.signal(signal.SIGINT, handle_ctrl_c)
 
 def readGPS():
-	c = None
-	response = []
-	
-	while True:
-		# Bit bang I2C read. 2 = Start, 6 = Read, 1 = How many bytes to read
-		a = pi.bb_i2c_zip(SDA, [4, address, 2, 6, 1])
-		c = ord(a[1])
+    c = None
+    response = []
+    try:
+        while True: # Newline, or bad char.
+            c = BUS.read_byte(address)
+            if c == 255:
+                return False
+            elif c == 10:
+                break
+            else:
+                response.append(c)
+        parseResponse(response)
+    except (IOError):
+        connectBus()
+    except (Exception,e):
+        print(str(e))
+connectBus()
 
-		if c == 255:
-			return False
-			
-		elif c == 10:
-			break
-		else:
-			response.append(c)
-	# Convert list to string
-	gpsChars = ' '.join(chr(c) for c in response)
-	print(gpsChars)
-
-	while True:
-		readGPS()
-		time.sleep(gpsReadInterval)
-
-'''
+while True:
+    readGPS()
+    time.sleep(gpsReadInterval)
