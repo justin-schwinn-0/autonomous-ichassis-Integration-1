@@ -1,3 +1,43 @@
+'''
+Welcome to test_sensors.py! 			Author: Bridgette Bryant
+This program was created to test all the sensors on the RPi-Chassis.
+It has several functons:
+
+main:
+	This is the main driver program. It utilizes the other functions.
+	Primarily it initilizes everything, and then goes into a (forever)
+	while loop. Within the loop it reads in the next character from the
+	terminal. If the character read is one of the valid characters to
+	test one of the sensors it will call the appropriate function.
+
+print_welcome:
+	This simply prints a welcome message and the correlating keys to 
+	test each sensors on the RPi-Chassis.
+
+test_ultrasonic:
+	Prints the output of ultrasonic sensor to the user.
+
+test_grayscale:
+	Prints the output of the grayscale sensor to the user.
+
+test_camera:
+	Displays the output of the camera to the user.
+
+test_gps:
+	Currently not implemented, the plan is to have it print the Longitude,
+	Lagitude, and Course output of GPS to the user.
+
+test_accelerometer:
+	Displays the x,y,z output of the accelerometer to the user.
+
+test_gyrometer:
+	Displays the x,y,z output of the gyrometer to the user.
+
+test_magnetometer:
+	Displays the x,y,z output of the  magnetometer to the user.
+
+'''
+
 # Used for input processing/delay
 import time
 import readchar
@@ -11,6 +51,8 @@ import cv2
 # Import our IMU object
 import IMU
 
+
+# Prints the welcome message to the user with keypress directions
 def print_welcome():
 	print("Welcome to Test Sensors")
 	print("-----------------------")
@@ -23,14 +65,20 @@ def print_welcome():
 	print("M: Magnetometer")
 	print("Q: Quit")
 
+
+# Prints the output reading of the ultrasonic sensor
 def test_ultrasonic(rpichassis):
 	print_welcome()
 	print("Ultrasonic Distance: " + str(rpichassis.ultrasonic.read()))
 
+
+# Prints the output reading of the grayscale sensor
 def test_grayscale(rpichassis):
 	print_welcome()
 	print("Grayscale Value: " + str(rpichassis.get_grayscale_data()))
 
+
+# Displays the output of the camera, requires 'ESC' to exit
 def test_camera():
 	print_welcome()
 	# Initialize our PiCamera object
@@ -52,11 +100,15 @@ def test_camera():
 		print("Exiting Camera")
 		cv2.destroyAllWindows()
 		cam.close()
+
+
+# Prints GPS output, not currently implemented
 def test_gps():
 	print_welcome()
 	print("Sorry GPS testing unavailable at this time")
 
 
+# Prints the x,y,z coordinates of the accelerometer
 def test_accelerometer():
 	print_welcome()
 	print("Accelerometer:")
@@ -65,7 +117,7 @@ def test_accelerometer():
 	print("z: " + str(IMU.readACCz()))
 
 
-
+# Prints the x,y,z coordinates of the gyrometer
 def test_gyrometer():
 	print_welcome()
 	print("Gyrometer")
@@ -73,6 +125,8 @@ def test_gyrometer():
 	print("y: " + str(IMU.readGYRy()))
 	print("z: " + str(IMU.readGYRz()))
 
+
+# Prints the x,y,z coordinates of the magnetometer
 def test_magnetometer():
 	print_welcome()
 	print("Magnetometer")
@@ -80,15 +134,21 @@ def test_magnetometer():
 	print("y: " + str(IMU.readMAGy()))
 	print("z: " + str(IMU.readMAGz()))
 
+
+
+# This is the main driver function
 if __name__ == "__main__":
+
 	# Initialize our Picarx object
 	rpichassis = Picarx()
+
 	# Detect and Initialize our IMU
 	IMU.detectIMU()
 	if IMU.BerryIMUversion == 99:
 		print("No Berry IMU Found!")
 	else:
 		IMU.initIMU()
+
 	# Print the welcome message to the user
 	print_welcome()
 
@@ -126,7 +186,9 @@ if __name__ == "__main__":
 			elif 'q' == key:
 				print("\nQuit")
 				break
+
 			# Add a small input delay between changing commands
 			time.sleep(.05)
+
 		# Add a small char input delay
 		time.sleep(.02)
