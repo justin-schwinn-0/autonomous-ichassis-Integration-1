@@ -1,6 +1,6 @@
-from robot_hat import Pin, PWM, Servo, fileDB
-from robot_hat import Grayscale_Module, Ultrasonic
-from robot_hat.utils import reset_mcu
+from Robot_Hat import Pin, PWM, Servo, fileDB
+from Robot_Hat import Grayscale_Module, Ultrasonic
+from Robot_Hat.utils import reset_mcu
 import time
 import os
 
