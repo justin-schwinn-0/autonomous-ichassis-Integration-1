@@ -7,14 +7,17 @@ The live navigation and object detection will reside within this program.
 import time 							# Used to sleep
 from picarx import Picarx 				# Import our Picarx object
 from picamera import PiCamera			# Import our Picamera object
-from picarmera.array import PiRGBArray  # Import the RGB array for picamera
+from picamera.array import PiRGBArray  # Import the RGB array for picamera
 import cv2								# Import opencv, used for object detection/image proccessing
-import tensorflow						# Import tensorflow, used for running an object-detection model
+#import tensorflow						# Import tensorflow, used for running an object-detection model
+from tflite_support.task import core
+from tflite_support.task import processor
+from tflite_support.task import vision
 
 # This is a helper function for object_detection. It reads in RPi Chassis object and a tuple.
 # It will then update the tuple based on the ultrasonic sensors output
 def ultrasonic_detect(rpi_chassis, object):
-	print("In ultrasonic detection")
+	#print("In ultrasonic detection")
 
 	# Check if the ultrasonic sensor detects an object
 	distance = rpi_chassis.ultrasonic.read()
@@ -28,17 +31,66 @@ def ultrasonic_detect(rpi_chassis, object):
 	return object
 
 
+#This is a helper function to determine where an object is located 
+def location(boxLocation):
+	local = ''
+	#Getting the coordinates of the center of the box surrounding the object (automatically generated)
+	x_origin = boxLocation.origin_x
+	y_origin = boxLocation.origin_y
+	x_len = boxLocation.width
+	x_len = x_len / 2
+	y_len = boxLocation.height
+	y_len = y_len /2
+	x = x_origin + x_len
+	y = y_origin + y_len
+	#Determining the location using the center of the object
+	if x < 320:
+		if y < 240:
+			local = "Top Left"
+		elif y == 240:
+			local = "Center Left"
+		else:
+			local = "Bottom Left"
+	elif x == 320:
+		if y < 240:
+			local = "Top Middle"
+		elif y == 240:
+			local = "True Middle"
+		else:
+			local = "Bottom Middle"
+	else:
+		if y < 240:
+			local = "Top Right"
+		elif y == 240:
+			local = "Center Right"
+		else:
+			local = "Bottom Right"
+
+	return local
+
+
 # This is a helper function for object detection. It reads in the streamed image and a tuple.
 # It will update the tuple based on the camera's input.
-def camera_detect(img, object):
+def camera_detect(img, object, detector):
 	# Reduce the image size for reduced calculation & efficiency
 	# Camera goes here
+	rgb_image = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+	input = vision.TensorImage.create_from_array(rgb_image)
+	dobject = detector.detect(input)
+	#object_detected = dobject.detections
+	if dobject.detections:
+		object_detected = dobject.detections[0]
+		obj_cat = object_detected.categories[0]
+		obj_loc = object_detected.bounding_box
+		#Getting the object category
+		obj_type = obj_cat.category_name
+		locat = location(obj_loc)
+		object = (True, obj_type, locat)		
+	return object
 
 
-
-
-def object_detection(rpi_chassis, img):
-	print("In object-detection")
+def object_detection(rpi_chassis, img, detector):
+	#print("In object-detection")
 
 	# This is what our function will return
 	# (True/False if object detected, Type of object, Location of Object)
@@ -48,7 +100,7 @@ def object_detection(rpi_chassis, img):
 	object = ultrasonic_detect(rpi_chassis, object)
 
 	# Check if the camera has detected an object
-	object = camera_detect(img, object)
+	object = camera_detect(img, object, detector)
 
 	# Return the object information
 	return object
@@ -76,11 +128,15 @@ if __name__ == "__main__":
 	# Our infinate loop for continuous object-detection and navigation
 	while True:
 		# Get continuous input from our camera NOTE: This is also an infiniate loop!
+		boption = core.BaseOptions(file_name='efficientdet_lite0.tflite', use_coral=False, num_threads=4)
+		doption = processor.DetectionOptions(max_results=1, score_threshold=0.6)
+		options = vision.ObjectDetectorOptions(base_options=boption, detection_options=doption)
+		detector = vision.ObjectDetector.create_from_options(options)
 		for frame in rpi_camera.capture_continuous(raw_capture, format='bgr', use_video_port=True):
 			# Convert our image into an array
 			img = frame.array
 			# Detect objects using the object detection function
-			is_object, object_type, object_location = object_detection(rpi_chassis, img)
+			is_object, object_type, object_location = object_detection(rpi_chassis, img, detector)
 
 			# If there is an object
 			if is_object:
@@ -92,12 +148,12 @@ if __name__ == "__main__":
 				print("No object detected!")
 
 			# Show the image
-			cv2.imshow('RPi Camera', img)
+			#cv2.imshow('RPi Camera', img)
 			# Release image cache
 			raw_capture.truncate(0)
 
 			k = cv2.waitKey(1) & 0xFF
-			if k = 27:
+			if k == 27:
 				break
 
 		# Exit the while loop
