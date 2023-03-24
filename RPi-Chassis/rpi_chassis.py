@@ -9,7 +9,8 @@ from picarx import Picarx 				# Import our Picarx object
 from picamera import PiCamera			# Import our Picamera object
 from picarmera.array import PiRGBArray  # Import the RGB array for picamera
 import cv2								# Import opencv, used for object detection/image proccessing
-import tensorflow						# Import tensorflow, used for running an object-detection model
+import IMU								# Import our IMU script
+import GPS								# Import our GPS script
 
 # This is a helper function for object_detection. It reads in RPi Chassis object and a tuple.
 # It will then update the tuple based on the ultrasonic sensors output
@@ -35,8 +36,6 @@ def camera_detect(img, object):
 	# Camera goes here
 
 
-
-
 def object_detection(rpi_chassis, img):
 	print("In object-detection")
 
@@ -52,6 +51,23 @@ def object_detection(rpi_chassis, img):
 
 	# Return the object information
 	return object
+
+
+# Note: The following 3 functions will likely be adjusted to include better accuracy/calibration
+# Returns the (x,y,z) coordinates of the accelerometer
+def get_accelerometer():
+	return (IMU.readACCx(), IMU.readACCy(), IMU.readACCz())
+
+
+# Returns the (x,y,z) coordinates of the gyrometer
+def get_gyrometer():
+	return (IMU.readGYRx(), IMU.readGYRy(), IMU.readGYRz())
+
+
+# Returns the (x,y,z) coordinates of the magnetometer
+def get_magnetometer():
+	return (IMU.readMAGx(), IMU.readMAGy(), IMU.readMAGz())
+
 
 
 # This is where the primary repeated navigation code will reside, for now it is a place holder

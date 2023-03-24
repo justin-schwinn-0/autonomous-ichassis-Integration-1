@@ -48,9 +48,10 @@ from picamera import PiCamera
 from picamera.array import PiRGBArray
 # Import Open CV
 import cv2
-# Import our IMU object
+# Import our IMU script
 import IMU
-
+# Import our GPS script
+import GPS
 
 # Prints the welcome message to the user with keypress directions
 def print_welcome():
@@ -105,7 +106,12 @@ def test_camera():
 # Prints GPS output, not currently implemented
 def test_gps():
 	print_welcome()
-	print("Sorry GPS testing unavailable at this time")
+	latitude, longitude = GPS.get_coorindates()
+	print("Latitude: " + str(latitude))
+	print("Longitude: " + str(longitude))
+	course, speed = GPS.get_course_speed()
+	print("Course: " + str(course))
+	print("Speed: " + str(speed))
 
 
 # Prints the x,y,z coordinates of the accelerometer
