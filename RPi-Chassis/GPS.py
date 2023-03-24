@@ -5,29 +5,37 @@ import signal
 import sys
 BUS = None
 address = 0x42
-gpsReadInterval = 0.03
+gps_read_interval = 0.03
 
-def connectBus():
+# Create our GPS class
+class GPS(object):
+
+    def __init__(self):
+        latitude = -1 # Our default latitude
+        longitude = -1 # Our default longitude
+        course = -400 # Our default course angle
+
+def connect_bus():
     global BUS
     BUS = smbus.SMBus(1)
 
-def parseResponse(gpsLine):
-  if(gpsLine.count(36) == 1):                           # Check #1, make sure '$' doesnt appear twice
-    if len(gpsLine) < 84:                               # Check #2, 83 is maximun NMEA sentenace length.
-        CharError = 0;
-        for c in gpsLine:                               # Check #3, Make sure that only readiable ASCII charaters and Carriage Return are seen.
+def parse_response(gps_line):
+  if(gps_line.count(36) == 1):                           # Check #1, make sure '$' doesnt appear twice
+    if len(gps_line) < 84:                               # Check #2, 83 is maximum NMEA sentence length.
+        char_error = 0;
+        for c in gps_line:                               # Check #3, Make sure that only readiable ASCII charaters and Carriage Return are seen.
             if (c < 32 or c > 122) and  c != 13:
-                CharError+=1
-        if (CharError == 0):#    Only proceed if there are no errors.
-            gpsChars = ''.join(chr(c) for c in gpsLine)
-            if (gpsChars.find('txbuf') == -1):          # Check #4, skip txbuff allocation error
-                gpsStr, chkSum = gpsChars.split('*',2)  # Check #5 only split twice to avoid unpack error
-                gpsComponents = gpsStr.split(',')
-                chkVal = 0
-                for ch in gpsStr[1:]: # Remove the $ and do a manual checksum on the rest of the NMEA sentence
-                     chkVal ^= ord(ch)
-                if (chkVal == int(chkSum, 16)): # Compare the calculated checksum with the one in the NMEA sentence
-                     print(str(gpsChars))
+                char_error+=1
+        if (char_error == 0):#    Only proceed if there are no errors.
+            gps_chars = ''.join(chr(c) for c in gps_line)
+            if (gps_chars.find('txbuf') == -1):          # Check #4, skip txbuff allocation error
+                gps_str, chk_sum = gps_chars.split('*',2)  # Check #5 only split twice to avoid unpack error
+                gps_components = gps_str.split(',')
+                chk_val = 0
+                for ch in gps_str[1:]: # Remove the $ and do a manual checksum on the rest of the NMEA sentence
+                     chk_val ^= ord(ch)
+                if (chk_val == int(chk_sum, 16)): # Compare the calculated checksum with the one in the NMEA sentence
+                     return str(gps_chars)
 
 def handle_ctrl_c(signal, frame):
         sys.exit(130)
@@ -35,7 +43,7 @@ def handle_ctrl_c(signal, frame):
 #This will capture exit when using Ctrl-C
 signal.signal(signal.SIGINT, handle_ctrl_c)
 
-def readGPS():
+def read_gps():
     c = None
     response = []
     try:
@@ -47,13 +55,19 @@ def readGPS():
                 break
             else:
                 response.append(c)
-        parseResponse(response)
+        return parse_response(response)
     except (IOError):
-        connectBus()
+        connect_bus()
     except (Exception,e):
         print(str(e))
-connectBus()
+
+
+def get_latitude():
+    # Get input from read_gps
+    gps_input = read_gps
+
+connect_bus()
 
 while True:
-    readGPS()
-    time.sleep(gpsReadInterval)
+    read_gps()
+    time.sleep(gps_read_interval)
