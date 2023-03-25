@@ -153,7 +153,7 @@ def convert_longitude(raw_lon, dir):
 
 
 # Returns the google-maps friendly coordinates (latitude, longitude)
-def get_coorindates():
+def get_coordinates():
     # Get input from read_gps until we recieve input in $GPGLL
     gps_input = read_gps()
     while gps_input[:6] != '$GPGLL':

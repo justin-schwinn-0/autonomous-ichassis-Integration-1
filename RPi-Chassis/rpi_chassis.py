@@ -34,7 +34,7 @@ def ultrasonic_detect(rpi_chassis, object):
 
 
 #This is a helper function to determine where an object is located 
-def location(boxLocation):
+def object_location(boxLocation):
 	local = ''
 	#Getting the coordinates of the center of the box surrounding the object (automatically generated)
 	x_origin = boxLocation.origin_x
@@ -86,7 +86,7 @@ def camera_detect(img, object, detector):
 		obj_loc = object_detected.bounding_box
 		#Getting the object category
 		obj_type = obj_cat.category_name
-		locat = location(obj_loc)
+		locat = object_location(obj_loc)
 		object = (True, obj_type, locat)		
 	return object
 
@@ -122,7 +122,6 @@ def get_gyrometer():
 # Returns the (x,y,z) coordinates of the magnetometer
 def get_magnetometer():
 	return (IMU.readMAGx(), IMU.readMAGy(), IMU.readMAGz())
-
 
 
 # This is where the primary repeated navigation code will reside, for now it is a place holder
@@ -166,6 +165,16 @@ if __name__ == "__main__":
 				# Otherwise there is no object
 				print("No object detected!")
 
+			# Get the coordinates from the gps
+			latitude, longitude = GPS.get_coordinates()
+			# Print the latitude and longitude
+			print("Latitude: ", latitude)
+			print("Longitude: ", longitude)
+			# Get the course and speed
+			course, speed = GPS.get_course_speed()
+			# Print the course and speed
+			print("Course: ", course)
+			print("Speed: ", speed)
 
 			# Show the image
 			#cv2.imshow('RPi Camera', img)
