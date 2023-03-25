@@ -1,7 +1,5 @@
 from NavAtomicClasses import Node
-from Utils import ProfileFunction
-import cProfile
-import pstats
+
 
 class NavGraph:
     def __init__(self) -> None:
@@ -33,7 +31,27 @@ class NavGraph:
                     currentDist -=1
                     path.append(e)
         return path
+    
+    #file format is:
+        #count = n
+        # n connections lines
+        # n node data lines
+    def WriteGraph(self, fn:str):
+        count = str(len(self.Nodes))
+        conStr = str()
+        nodeDatastr = str()
+
+        for c in self.Nodes:
+            conStr += c.ConnectionListasStr() + "\n"
+            nodeDatastr += c.toStr() + "\n"
+
+        with open(fn,"w") as f:
+            f.write(count + "\n")
+            f.write(conStr)
+            f.write(nodeDatastr)
+        pass
         
+
 class PathingData:
 
     def __init__(self,nodes) -> None:
@@ -75,7 +93,34 @@ class PathingData:
             self.DoVisit()
         
         return self.Distances
-        
+    
+#file format is:
+    #count = n
+    # n connections lines
+    # n node data lines
+def ReadGraphFromFile(fn:str) -> NavGraph:
+    with open(fn,'r') as f:
+        count = int(f.readline())
+        graph = NavGraph()
+        nodeList = []
+        for i in range(count):
+            connectionLine = f.readline()
+            connections = connectionLine.split(",")
+            conIndecies =[]
+            for c in connections:
+                conIndecies.append(int(c))
+
+            #print(conIndecies)
+            n = Node().addManyConnections(conIndecies)
+            nodeList.append(n)
+
+        for i in range(count):
+            dataLine = f.readline()
+            nodeList[i].resetDatawStr(dataLine)
+
+    graph.setNodes(nodeList)
+    return graph
+
 def baseTestCase():
     nodes =[]
 
@@ -102,6 +147,14 @@ def baseTestCase():
 
     print(path)
 
+    graph.WriteGraph("testFileGraph1.txt")
+
+    graph2 = ReadGraphFromFile("testFileGraph1.txt")
+
+    path2 = graph2.PathFromAtoB(0,10)
+
+    print(path2)
+
 if __name__ == "__main__":
     
-    ProfileFunction("baseTestCase")
+    baseTestCase()
