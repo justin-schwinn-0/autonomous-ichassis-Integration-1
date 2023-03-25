@@ -1,5 +1,7 @@
 from NavAtomicClasses import Node
-import timeit
+from Utils import ProfileFunction
+import cProfile
+import pstats
 
 class NavGraph:
     def __init__(self) -> None:
@@ -74,9 +76,7 @@ class PathingData:
         
         return self.Distances
         
-
-
-if __name__ == "__main__":
+def baseTestCase():
     nodes =[]
 
     for i in range(11):
@@ -98,6 +98,10 @@ if __name__ == "__main__":
     graph.AddPaths(9,[7,10])
     graph.AddPaths(10,[9]) 
 
-    print(graph.PathFromAtoB(0,10))
+    path = graph.PathFromAtoB(0,10)
 
-    pass    
+    print(path)
+
+if __name__ == "__main__":
+    
+    ProfileFunction("baseTestCase")
