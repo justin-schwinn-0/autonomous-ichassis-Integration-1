@@ -99,3 +99,10 @@ To https://github.com/NoahC77/autonomous-ichassis.git
 - How is it doing it?
 - Why is it doing it this way?
 5. Always reach out to a teammate for help as needed. If you need to better understand their code, if you are stuck, or if you just need advise.
+
+# Notes on Object Detection
+Make sure to run 
+```
+sh setup.sh
+```
+in the RPi-Chassis folder to ensure that you have everything needed to run the program. You should only need to run it when you test the program for the first time.
