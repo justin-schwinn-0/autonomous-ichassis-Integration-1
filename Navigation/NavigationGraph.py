@@ -1,6 +1,5 @@
 from NavAtomicClasses import Node
 
-
 class NavGraph:
     def __init__(self) -> None:
         self.Nodes = []
