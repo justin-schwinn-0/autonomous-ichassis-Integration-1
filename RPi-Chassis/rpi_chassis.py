@@ -9,6 +9,8 @@ from picarx import Picarx 				# Import our Picarx object
 from picamera import PiCamera			# Import our Picamera object
 from picamera.array import PiRGBArray  # Import the RGB array for picamera
 import cv2								# Import opencv, used for object detection/image proccessing
+import IMU								# Import our IMU script
+import GPS								# Import our GPS script
 #import tensorflow						# Import tensorflow, used for running an object-detection model
 from tflite_support.task import core
 from tflite_support.task import processor
@@ -32,7 +34,7 @@ def ultrasonic_detect(rpi_chassis, object):
 
 
 #This is a helper function to determine where an object is located 
-def location(boxLocation):
+def object_location(boxLocation):
 	local = ''
 	#Getting the coordinates of the center of the box surrounding the object (automatically generated)
 	x_origin = boxLocation.origin_x
@@ -84,7 +86,7 @@ def camera_detect(img, object, detector):
 		obj_loc = object_detected.bounding_box
 		#Getting the object category
 		obj_type = obj_cat.category_name
-		locat = location(obj_loc)
+		locat = object_location(obj_loc)
 		object = (True, obj_type, locat)		
 	return object
 
@@ -104,6 +106,22 @@ def object_detection(rpi_chassis, img, detector):
 
 	# Return the object information
 	return object
+
+
+# Note: The following 3 functions will likely be adjusted to include better accuracy/calibration
+# Returns the (x,y,z) coordinates of the accelerometer
+def get_accelerometer():
+	return (IMU.readACCx(), IMU.readACCy(), IMU.readACCz())
+
+
+# Returns the (x,y,z) coordinates of the gyrometer
+def get_gyrometer():
+	return (IMU.readGYRx(), IMU.readGYRy(), IMU.readGYRz())
+
+
+# Returns the (x,y,z) coordinates of the magnetometer
+def get_magnetometer():
+	return (IMU.readMAGx(), IMU.readMAGy(), IMU.readMAGz())
 
 
 # This is where the primary repeated navigation code will reside, for now it is a place holder
@@ -146,6 +164,17 @@ if __name__ == "__main__":
 			else:
 				# Otherwise there is no object
 				print("No object detected!")
+
+			# Get the coordinates from the gps
+			latitude, longitude = GPS.get_coordinates()
+			# Print the latitude and longitude
+			print("Latitude: ", latitude)
+			print("Longitude: ", longitude)
+			# Get the course and speed
+			course, speed = GPS.get_course_speed()
+			# Print the course and speed
+			print("Course: ", course)
+			print("Speed: ", speed)
 
 			# Show the image
 			#cv2.imshow('RPi Camera', img)
