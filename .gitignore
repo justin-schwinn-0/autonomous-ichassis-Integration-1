@@ -1,1 +1,7 @@
+.vscode/launch.json
+output_Calls.txt
+output_Time.txt
+output.dat
+Some specs.txt
+Navigation/__pycache__/Utils.cpython-39.pyc
 RPi-Chassis/navit

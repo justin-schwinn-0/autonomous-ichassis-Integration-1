@@ -1,5 +1,8 @@
 {
     "python.analysis.extraPaths": [
-        "./picar-x"
+        "./picar-x",
+        "./Navigation/",
+        "./Navigation/__pycache__",
+        "./Navigation/Profiling"
     ]
 }
