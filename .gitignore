@@ -4,4 +4,9 @@ output_Time.txt
 output.dat
 Some specs.txt
 Navigation/__pycache__/Utils.cpython-39.pyc
+# Ignore navit (large maps)
 RPi-Chassis/navit
+# Ignore all python cache files
+*.pyc
+# Ignore all swap files
+*.swp
