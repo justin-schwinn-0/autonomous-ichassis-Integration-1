@@ -5,15 +5,6 @@ import signal
 import sys
 BUS = None
 address = 0x42
-gps_read_interval = 0.03
-
-# Create our GPS class
-class GPS(object):
-
-    def __init__(self):
-        latitude = -1 # Our default latitude
-        longitude = -1 # Our default longitude
-        course = -400 # Our default course angle
 
 def connect_bus():
     global BUS
@@ -203,8 +194,8 @@ def get_course_speed():
 
 connect_bus()
 
-while True:
+#while True:
    #print(read_gps())
-   print(get_coordinates())
-   print(get_course_speed())
-   time.sleep(gps_read_interval)
+   #print(get_coordinates())
+   #print(get_course_speed())
+
