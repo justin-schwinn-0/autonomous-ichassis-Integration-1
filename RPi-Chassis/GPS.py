@@ -20,6 +20,7 @@ def connect_bus():
     BUS = smbus.SMBus(1)
 
 def parse_response(gps_line):
+  #print("In parse_response")
   if(gps_line.count(36) == 1):                           # Check #1, make sure '$' doesnt appear twice
     if len(gps_line) < 84:                               # Check #2, 83 is maximum NMEA sentence length.
         char_error = 0;
@@ -36,6 +37,7 @@ def parse_response(gps_line):
                      chk_val ^= ord(ch)
                 if (chk_val == int(chk_sum, 16)): # Compare the calculated checksum with the one in the NMEA sentence
                      return str(gps_chars)
+  return 'N/A'
 
 def handle_ctrl_c(signal, frame):
         sys.exit(130)
@@ -44,62 +46,76 @@ def handle_ctrl_c(signal, frame):
 signal.signal(signal.SIGINT, handle_ctrl_c)
 
 def read_gps():
+    #print("In read_gps")
     c = None
     response = []
     try:
+        #print("In try")
         while True: # Newline, or bad char.
             c = BUS.read_byte(address)
             if c == 255:
-                return False
+                #print("c == 255")
+                return 'N/A'
             elif c == 10:
+                #print("c == 10")
                 break
             else:
+                #print("appending response")
                 response.append(c)
+        #print("returning response")
+        #print("response: " + str(response))
         return parse_response(response)
     except (IOError):
+        #print("IO Error")
         connect_bus()
+        return 'N/A'
     except (Exception,e):
+        #print("Exception")
         print(str(e))
+        return 'N/A'
 
 
-# Parses the $GPGLL string and returns a tuple of its important outputs
+# Parses the GLL string and returns a tuple of its important outputs
 # (Latitude, N/S, Longitude, E/W, UTC Time, Status)
-def parse_gpgll(gpgll):
-    gpgll_list = gpgll.split(',')
-    #print(len(gpgll_list))
-    #print(gpgll_list)
+def parse_gll(gll):
+    gll_list = gll.split(',')
+    #print(len(gll_list))
+    #print(gll_list)
 
-    # Skip the first field Message ID($GPGLL)
+    # Skip the first field Message ID($GNGLL)
     # The second field is Latitude (ddmm.mmmm), third is N/S indicator
-    #print("\nraw latitude: " + str(gpgll_list[1]) + " " + str(gpgll_list[2]))
+    #print("\nraw latitude: " + str(gll_list[1]) + " " + str(gll_list[2]))
     # The fourth field is Longitude (dddmm.mmmm), fifth is E/W indicator
-    #print("raw longitude: " + str(gpgll_list[3]) + " " + str(gpgll_list[4]))
+    #print("raw longitude: " + str(gll_list[3]) + " " + str(gll_list[4]))
     # The sixth is the UTC time
-    #print("utc time: " + str(gpgll_list[5]))
+    #print("utc time: " + str(gll_list[5]))
     # The seventh is the status (A is valid data, V is invalid data)
-    #print("status: " + str(gpgll_list[6]))
+    #print("status: " + str(gll_list[6]))
     # Return the important values
-    return (gpgll_list[1], gpgll_list[2], gpgll_list[3], gpgll_list[4], gpgll_list[5], gpgll_list[6])
+    return (gll_list[1], gll_list[2], gll_list[3], gll_list[4], gll_list[5], gll_list[6])
 
 
-# Parses the $GPVTG string and returns a tuple of its important outputs
+# Parses the VTG string and returns a tuple of its important outputs
 # (Course, Reference, Speed, Units)
-def parse_gpvtg(gpvtg):
-    gpvtg_list = gpvtg.split(',')
-    #print(len(gpvtg_list))
-    #print(gpvtg_list)
+def parse_vtg(vtg):
+    vtg_list = vtg.split(',')
+    #print(len(vtg_list))
+    #print(vtg_list)
 
     # Skip the first field Message ID($GPVTG)
     # The second field is the Course in degrees and their reference (True)
-    #print("course: " + str(gpvtg_list[1]) + " " + gpvtg_list[2])
+    #print("course: " + str(vtg_list[1]) + " " + vtg_list[2])
     # The eighth is the speed in kilometers
-    #print("status: " + str(gpvtg_list[7]) + " " + str(gpvtg_list[8]))
+    #print("status: " + str(vtg_list[7]) + " " + str(vtg_list[8]))
     # Return the important values
-    return (gpvtg_list[1], gpvtg_list[2], gpvtg_list[7], gpvtg_list[8])
+    return (vtg_list[1], vtg_list[2], vtg_list[7], vtg_list[8])
 
 
 # Converts the raw latitude input into decimal degrees (google maps friendly)
 def convert_latitude(raw_lat, dir):
+    # Verify both fields are not emtpy
+    if len(raw_lat) == 0 or len(dir) == 0:
+        return None
     # Our original format is ddmm.mmmm (d = decimal degrees, m = decimal minutes)
     # For google maps we need it to be in dd.dddd format (north is positive, south is negative
     # First we will parse our raw latitude input
@@ -127,6 +143,9 @@ def convert_latitude(raw_lat, dir):
 
 # Converts the raw longitude input into decimal degrees (google maps friendly)
 def convert_longitude(raw_lon, dir):
+    # Verify both fields are not empty
+    if len(raw_lon) == 0 or len(dir) == 0:
+        return None
     # Our original format is dddmm.mmmm (d = decimal degrees, m = decimal minutes)
     # For google maps we need it to be in dd.dddd format (east is positive, west is negative
     # First we will parse our raw latitude input
@@ -154,17 +173,17 @@ def convert_longitude(raw_lon, dir):
 
 # Returns the google-maps friendly coordinates (latitude, longitude)
 def get_coordinates():
-    # Get input from read_gps until we recieve input in $GPGLL
-    gps_input = read_gps()
-    while gps_input[:6] != '$GPGLL':
+    # Get input from read_gps until we recieve input in GLL
+    gps_input = str(read_gps())
+    while str(gps_input[3:6]) != 'GLL':
         gps_input = read_gps()
 
     # After getting the GPGLL input parse it
-    gpgll = parse_gpgll(gps_input)
+    gll = parse_gll(gps_input)
     # Next we can get the calculated latitude
-    latitude = convert_latitude(gpgll[0], gpgll[1])
+    latitude = convert_latitude(gll[0], gll[1])
     # Next we can get the calculated longitude
-    longitude = convert_longitude(gpgll[2], gpgll[3])
+    longitude = convert_longitude(gll[2], gll[3])
 
     # Finally we can return the calculated latitude and longitude
     return (latitude, longitude)
@@ -172,18 +191,20 @@ def get_coordinates():
 
 # Returns the course angle from the 'True' reference and the speed in Kilometers/Hr
 def get_course_speed():
-    # Get input from the read_gps until we recieve input in $GPVTG
-    gps_input = read_gps()
-    while gps_input != '$GPVTG':
+    # Get input from the read_gps until we recieve input in VTG
+    gps_input = str(read_gps())
+    while str(gps_input[3:6]) != 'VTG':
         gps_input = read_gps()
 
-    # After getting the GPVTG input parse it
-    gpvtg = parse_gpvtg(gps_input)
+    # After getting the VTG input parse it
+    vtg = parse_vtg(gps_input)
     # Next return the course value and the speed
-    return (gpvtg[0], gpvtg[2])
+    return (vtg[0], vtg[2])
 
 connect_bus()
 
-#while True:
-#   read_gps()
-#   time.sleep(gps_read_interval)
+while True:
+   #print(read_gps())
+   print(get_coordinates())
+   print(get_course_speed())
+   time.sleep(gps_read_interval)
