@@ -1,16 +1,20 @@
 class Node:
+
+    # The constructor, each node has an x and y value. x and y are the longitude and latitude respectively. connections denote the neighbors to a node.
     def __init__(self,type:str = 'x', X:float=0, Y:float=0,label:str="")-> None:
         self.type = type
         self.X = X
         self.Y = Y
         self.label = label
         self.connections = []
-
+    
+    # addConnection() is used to add a neighbor to the node.
     def addConnection(self, index):
         if(index not in self.connections):
             self.connections.append(index)
         return self
-    
+   
+    # uses addConnection() alot
     def addManyConnections(self, list):
         for i in list:
             self.addConnection(i)
@@ -22,6 +26,7 @@ class Node:
     def getLocation(self):
         return self.X,self.Y
 
+    # ConnectionListasStr() parses a lin from the input file and assigns the connections denoted in the input file to the self node
     def ConnectionListasStr(self)->str:
         if(len(self.connections) == 0):
             return "ERR"
