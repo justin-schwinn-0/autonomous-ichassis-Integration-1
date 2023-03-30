@@ -1,9 +1,13 @@
 import os,sys
 sys.path.append("./Navigation")
+sys.path.append("./RPi-Chassis")
 
 from NavigationGraph import NavGraph
 from NavAtomicClasses import *
+import GPS
 import math
+
+piCar = Picarx()
 
 def AngleFromAToB(a,b)-> float :
     ax,ay = a.getLocation()
@@ -78,28 +82,43 @@ class Car:
 
     def getLocation(self):
         return self.X,self.Y
-    
+
+    def UpdateLocation(self):
+        lat,Long = GPS.get_coordinates()
+
+    def UpdateCourse(self):
+        course, speed = GPS.get_course_speed()
+        self.angle = fixAngle(course)
+
+    def GPSturn(self, direction):
+        if(direction == 'x'):
+            return None
+        
+        if(direction == 'L'):
+         piCar.steer_left()
+        else:
+         piCar.steer_right()
+
+    def GPSMove():
+        piCar.forward(Car.NormalSpeed)
+
 def testCase():
     #            C
     #           / \        
     #    A -- B     D--e--f
-    a = Node('x',-2,0,"A")
-    b = Node('x',1,0,"B")
-    c = Node('x',2,1,"C")
-    d = Node('x',3,0,"D")
-    e = Node('x',4,.1,"E")
-    f = Node('x',6,.2,"E")
+    a = Node('x',32.99328671685252, -96.75160268387103,"A")
+    b = Node('x',32.99339582533694, -96.75160536608,"B")
+    c = Node('x',32.99340482396881, -96.75150746545252,"C")
+    d = Node('x',32.993400324653, -96.75143638691478,"D")
 
     graph = NavGraph()
-    graph.setNodes([a,b,c,d,e,f])
+    graph.setNodes([a,b,c,d])
 
     graph.AddPaths(0,[1])
     graph.AddPaths(1,[2])
     graph.AddPaths(2,[3])
-    graph.AddPaths(3,[4])
-    graph.AddPaths(4,[5])
 
-    path = graph.PathFromAtoB(0,5)
+    path = graph.PathFromAtoB(0,3)
 
     return path,graph
 
@@ -136,6 +155,7 @@ def Traverse1(path,graph:NavGraph):
 def TraverseToNode(graph:NavGraph,targetIndex:int,c:Car)->bool: # return true if reached node, false otherwise
     #if object detection is good, go on
     #if path finding is good, go on.
+
     targetAngle = AngleFromAToB(c,graph.Nodes[targetIndex])
     distanceToTarget = distanceFromAtoB(c,graph.Nodes[targetIndex])
     if distanceToTarget < Car.NodeDistanceTolerance: # reached node, return true
@@ -150,15 +170,32 @@ def TraverseToNode(graph:NavGraph,targetIndex:int,c:Car)->bool: # return true if
     return False
     
 
+def TraverseToNodeGPS(graph:NavGraph,targetIndex:int,c:Car)->bool: # return true if reached node, false otherwise
+    #if object detection is good, go on
+    #if path finding is good, go on.
+
+    c.UpdateCourse()
+    c.UpdateLocation()
+
+    targetAngle = AngleFromAToB(c,graph.Nodes[targetIndex])
+    distanceToTarget = distanceFromAtoB(c,graph.Nodes[targetIndex])
+    if distanceToTarget < Car.NodeDistanceTolerance: # reached node, return true
+        return True
+    else: #turn the car if necessary, then move forward at a low speed if turning, higher if no turn
+        direction, angleDelta = c.getturnData(targetAngle)
+        c.GPSturn(direction, angleDelta)
+        c.GPSMove(direction)
+
+        print(f"target: {graph.Nodes[targetIndex].getLocation()} Car Location: {c.getLocation()} Car angle: {c.angle} angle Delta: {angleDelta}")
+
+    return False
+
 
 
 if __name__ == "__main__":
-    p,g =testCase()
+    p,g = testCase()
     c = Car()
-    #Traverse1(p,g)
-    #TestAngles()
-
-    print(-185%180)
+    
 
     i = 0
     while i < len(p):
@@ -167,3 +204,4 @@ if __name__ == "__main__":
             print("node",i, "reached")
             i+=1
     print("destination reached")
+    piCar.stop()
