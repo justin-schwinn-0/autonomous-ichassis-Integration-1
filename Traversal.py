@@ -9,7 +9,7 @@ import math
 
 piCar = Picarx()
 
-def AngleFromAToB(a,b)-> float :
+def AngleFromAToB(a,b)-> float:
     ax,ay = a.getLocation()
     bx,by = b.getLocation()
 
@@ -23,7 +23,8 @@ def distanceFromAtoB(a,b)-> float:
     bx,by = b.getLocation()
     return math.sqrt((bx-ax)**2 + (by-ay)**2)
 
-def fixAngle(angleDiff):
+#turns a 0 to 360 angle into a -180 to 180 angle
+def fixAngle(angleDiff): 
     remainder = angleDiff % 180
     newAngle = angleDiff
     if(angleDiff > 180 or angleDiff < -180):
@@ -35,7 +36,7 @@ class Car:
     
     AngleTolerance = 5.0
     NodeDistanceTolerance = 0.2
-    MaxTurn = 30                    # for testing purposes, not used later
+    MaxTurn = 30                    # for testing purposes, not used on piccar
     TurningMoveSpeed = 0.2
     NormalSpeed = .4
 
@@ -43,8 +44,6 @@ class Car:
         self.angle = 0.0
         self.X = 0
         self.Y = 0 
-        #temp class, will be replaced by actual piCar class later.
-        #this allows testing simulations
     
     def getturnData(self, targetAngle): #L is left, x is no turn, R is right
         angleDiff = targetAngle - self.angle
@@ -102,6 +101,7 @@ class Car:
     def GPSMove():
         piCar.forward(Car.NormalSpeed)
 
+#keep
 def testCase():
     #            C
     #           / \        
@@ -110,6 +110,8 @@ def testCase():
     b = Node('x',32.99339582533694, -96.75160536608,"B")
     c = Node('x',32.99340482396881, -96.75150746545252,"C")
     d = Node('x',32.993400324653, -96.75143638691478,"D")
+
+    #might need to trim these numbers, 6 or 7 digits of percision is should be good, if we even have that much percision in the GPS
 
     graph = NavGraph()
     graph.setNodes([a,b,c,d])
@@ -122,6 +124,7 @@ def testCase():
 
     return path,graph
 
+#just testing angles, ignore
 def TestAngles():
     a = Node('x',0,0,"A")
     b = Node('x',1,1,"B") #45
@@ -142,6 +145,8 @@ def TestAngles():
     print(eangle)
     print(fangle)
 
+
+#don't use this at all
 def Traverse1(path,graph:NavGraph):
     
     for i in range(len(path)-1):
@@ -152,6 +157,7 @@ def Traverse1(path,graph:NavGraph):
         print("Target angle:",angleAB,direction,angleDiff)
     pass
 
+#this function should not be used on the picar
 def TraverseToNode(graph:NavGraph,targetIndex:int,c:Car)->bool: # return true if reached node, false otherwise
     #if object detection is good, go on
     #if path finding is good, go on.
@@ -169,8 +175,8 @@ def TraverseToNode(graph:NavGraph,targetIndex:int,c:Car)->bool: # return true if
 
     return False
     
-
-def TraverseToNodeGPS(graph:NavGraph,targetIndex:int,c:Car)->bool: # return true if reached node, false otherwise
+# return true if reached node, false otherwise
+def TraverseToNodeGPS(graph:NavGraph,targetIndex:int,c:Car)->bool: 
     #if object detection is good, go on
     #if path finding is good, go on.
 
@@ -182,12 +188,19 @@ def TraverseToNodeGPS(graph:NavGraph,targetIndex:int,c:Car)->bool: # return true
     if distanceToTarget < Car.NodeDistanceTolerance: # reached node, return true
         return True
     else: #turn the car if necessary, then move forward at a low speed if turning, higher if no turn
+        #it looks like "move slow if moving" is built into picar.forward()
         direction, angleDelta = c.getturnData(targetAngle)
-        c.GPSturn(direction, angleDelta)
-        c.GPSMove(direction)
+        c.GPSturn(direction)
+        c.GPSMove()
 
-        print(f"target: {graph.Nodes[targetIndex].getLocation()} Car Location: {c.getLocation()} Car angle: {c.angle} angle Delta: {angleDelta}")
+        debugstring = ""
+        debugstring += f" target: {graph.Nodes[targetIndex].getLocation()}" 
+        debugstring += f" Car Location: {c.getLocation()}"
+        debugstring += f" Car angle: {c.angle}"
+        debugstring += f" angle Delta: {angleDelta}"
 
+        print(debugstring)
+       
     return False
 
 
