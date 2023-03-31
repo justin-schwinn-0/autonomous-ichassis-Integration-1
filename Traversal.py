@@ -63,8 +63,6 @@ class Car:
 
         return dir,angleDiff
 
-
-
     #turning logic and simulation, not for picar, might be resused later if we need a microsim
     def turn(self,direction, angleDelta): # most of this code would be repleaced by calls to PicarTurnleft
         if(direction == 'x'):
@@ -87,10 +85,10 @@ class Car:
         return self.X,self.Y
 
     def UpdateLocation(self):
-        lat,Long = GPS.get_coordinates()
+        latitude,longitude = GPS.get_coordinates()
 
     def UpdateCourse(self):
-        course, speed = GPS.get_course_speed()
+        course, unused_speed = GPS.get_course_speed()
         self.angle = fixAngle(course)
 
     def PiCARturn(self, direction):
