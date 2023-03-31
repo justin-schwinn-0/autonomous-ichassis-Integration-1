@@ -16,6 +16,8 @@ from tflite_support.task import core
 from tflite_support.task import processor
 from tflite_support.task import vision
 
+num_objects = 2
+
 # This is a helper function for object_detection. It reads in RPi Chassis object and a tuple.
 # It will then update the tuple based on the ultrasonic sensors output
 def ultrasonic_detect(rpi_chassis, object):
@@ -81,19 +83,24 @@ def camera_detect(img, object, detector):
 	dobject = detector.detect(input)
 	#print("dobject: " + str(dobject))
 	#object_detected = dobject.detections
+	is_found = []
+	obj_type = []
+	locat = []
 	if dobject.detections:
-		object_detected = dobject.detections[0]
-		obj_cat = object_detected.categories[0]
-		obj_loc = object_detected.bounding_box
-		#print("object_detected: " + str(object_detected))
-		#print("obj_cat: " + str(obj_cat))
-		#print("obj_loc: " + str(obj_loc))
-		#Getting the object category
-		obj_type = obj_cat.category_name
+		for obj in dobject.detections:
+			object_detected = dobject.detections[0]
+			obj_cat = object_detected.categories[0]
+			obj_loc = object_detected.bounding_box
+			#print("object_detected: " + str(object_detected))
+			#print("obj_cat: " + str(obj_cat))
+			#print("obj_loc: " + str(obj_loc))
+			#Getting the object category
+			is_found.append(True)
+			obj_type.append(str(obj_cat.category_name))
 		#print("obj_type: " + str(obj_type))
-		locat = get_obj_location(obj_loc)
+			locat.append(str(get_obj_location(obj_loc)))
 		#print("locat: " + str(locat))
-		object = (True, str(obj_type), str(locat))		
+		object = (is_found, obj_type, locat)		
 	return object
 
 
@@ -155,7 +162,7 @@ if __name__ == "__main__":
 	while True:
 		# Get continuous input from our camera NOTE: This is also an infiniate loop!
 		boption = core.BaseOptions(file_name='tf_lite_models/efficientdet_lite0.tflite', use_coral=False, num_threads=4)
-		doption = processor.DetectionOptions(max_results=1, score_threshold=0.6)
+		doption = processor.DetectionOptions(max_results=num_objects, score_threshold=0.6)
 		options = vision.ObjectDetectorOptions(base_options=boption, detection_options=doption)
 		detector = vision.ObjectDetector.create_from_options(options)
 		for frame in rpi_camera.capture_continuous(raw_capture, format='bgr', use_video_port=True):
@@ -165,16 +172,17 @@ if __name__ == "__main__":
 			img = frame.array
 			# Detect objects using the object detection function
 			is_object, object_type, object_location = object_detection(rpi_chassis, img, detector)
-
+			num = 0
 			# If there is an object
-			if is_object:
+			for object in is_object:
 				print("There is an object!")
-				print("Type: " + str(object_type))
-				print("Location: " + str(object_location))
+				print("Type: " + object_type[num])
+				print("Location: " + object_location[num])
+				num += 1
 			else:
 				# Otherwise there is no object
 				print("No object detected!")
-			
+			print("The number of objects detected was: " + str(num))
 			print("Elasped time: " + str(time.time()-start_time))
 			# Get the coordinates from the gps
 			latitude, longitude = GPS.get_coordinates()
