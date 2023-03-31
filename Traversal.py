@@ -54,7 +54,7 @@ class Car:
 
         absDiff = abs(angleDiff)
         dir = 0
-
+        # L is left, x is no turn, R is right
         if(absDiff < Car.AngleTolerance):
             dir = "x"
         elif(angleDiff <= 0): # turn left
