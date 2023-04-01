@@ -88,9 +88,9 @@ def camera_detect(img, object, detector):
 	locat = []
 	if dobject.detections:
 		for obj in dobject.detections:
-			object_detected = dobject.detections[0]
-			obj_cat = object_detected.categories[0]
-			obj_loc = object_detected.bounding_box
+			#object_detected = dobject.detections[0]
+			obj_cat = obj.categories[0]
+			obj_loc = obj.bounding_box
 			#print("object_detected: " + str(object_detected))
 			#print("obj_cat: " + str(obj_cat))
 			#print("obj_loc: " + str(obj_loc))
