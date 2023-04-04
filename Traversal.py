@@ -46,6 +46,7 @@ class Car:
         self.X = 0
         self.Y = 0 
     
+    # returns the direction of the car and the difference between the direction of the car and the desired direction of the car to hit the next node
     def getturnData(self, targetAngle): #L is left, x is no turn, R is right
         angleDiff = targetAngle - self.angle
 
@@ -53,7 +54,7 @@ class Car:
 
         absDiff = abs(angleDiff)
         dir = 0
-
+        # L is left, x is no turn, R is right
         if(absDiff < Car.AngleTolerance):
             dir = "x"
         elif(angleDiff <= 0): # turn left
@@ -62,8 +63,6 @@ class Car:
             dir = 'R'
 
         return dir,angleDiff
-
-
 
     #turning logic and simulation, not for picar, might be resused later if we need a microsim
     def turn(self,direction, angleDelta): # most of this code would be repleaced by calls to PicarTurnleft
@@ -87,10 +86,10 @@ class Car:
         return self.X,self.Y
 
     def UpdateLocation(self):
-        lat,Long = GPS.get_coordinates()
+        latitude,longitude = GPS.get_coordinates()
 
     def UpdateCourse(self):
-        course, speed = GPS.get_course_speed()
+        course, unused_speed = GPS.get_course_speed()
         self.angle = fixAngle(course)
 
     def PiCARturn(self, direction):
@@ -183,7 +182,7 @@ def TraverseToNode(graph:NavGraph,targetIndex:int,c:Car)->bool:
         print(f"target: {graph.Nodes[targetIndex].getLocation()} Car Location: {c.getLocation()} Car angle: {c.angle} angle Delta: {angleDelta}")
 
     return False
-    
+        
 # return true if reached node, false otherwise
 def TraverseToNodeGPS(graph:NavGraph,targetIndex:int,c:Car)->bool: 
     #if object detection is good, go on
@@ -200,8 +199,10 @@ def TraverseToNodeGPS(graph:NavGraph,targetIndex:int,c:Car)->bool:
         # turn the car if necessary 
         # then move forward at a low speed if turning, higher if no turn
         # it looks like "move slow if moving" is built into picar.forward()
-
+        # angleDelta is the difference between the direction the car is facing and the direction the car should be facing to hit the next node perfectly
         direction, angleDelta = c.getturnData(targetAngle)
+        
+        
         c.PiCARturn(direction)
         c.PiCARMove()
 
@@ -216,7 +217,7 @@ def TraverseToNodeGPS(graph:NavGraph,targetIndex:int,c:Car)->bool:
     return False
 
 
-
+# python3 traversal.py starts here
 if __name__ == "__main__":
     p,g = testCase()
     c = Car()
@@ -224,7 +225,8 @@ if __name__ == "__main__":
 
     i = 0
     while i < len(p):
-        reachedTargetNode = TraverseToNode(g,p[i],c)
+        # p[] = path of nodes in order to reach the destination
+        reachedTargetNode = TraverseToNodeGPS(g,p[i],c)
         if(reachedTargetNode):
             print("node",i, "reached")
             i+=1
