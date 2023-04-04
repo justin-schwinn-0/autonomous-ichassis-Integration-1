@@ -16,7 +16,8 @@ from tflite_support.task import core
 from tflite_support.task import processor
 from tflite_support.task import vision
 
-num_objects = 2
+#Making these easy to change so that its easier to test
+num_objects = 3 #number of objects the camera will detect
 
 # This is a helper function for object_detection. It reads in RPi Chassis object and a tuple.
 # It will then update the tuple based on the ultrasonic sensors output
@@ -30,7 +31,9 @@ def ultrasonic_detect(rpi_chassis, object):
 	# If the distance is less than 30, we have detected an object!
 	if distance < 30:
 		# Set our tuple that an object has been detected
-		object = (True, "unknown", "center")
+		is_there = [True]
+		there = ["unknown"]
+		object = (is_there, there, there)
 
 	return object
 
@@ -161,10 +164,11 @@ if __name__ == "__main__":
 	# Our infinate loop for continuous object-detection and navigation
 	while True:
 		# Get continuous input from our camera NOTE: This is also an infiniate loop!
-		boption = core.BaseOptions(file_name='tf_lite_models/efficientdet_lite0.tflite', use_coral=False, num_threads=4)
+		boption = core.BaseOptions(file_name='tf_lite_models/efficientdet_lite0.tflite', use_coral=True, num_threads=2)
 		doption = processor.DetectionOptions(max_results=num_objects, score_threshold=0.6)
 		options = vision.ObjectDetectorOptions(base_options=boption, detection_options=doption)
 		detector = vision.ObjectDetector.create_from_options(options)
+		#rpi_chassis.stop()
 		for frame in rpi_camera.capture_continuous(raw_capture, format='bgr', use_video_port=True):
 			print("\n\nBeginning of loop:")
 			print("Elasped time: " + str(time.time()-start_time))
@@ -173,15 +177,20 @@ if __name__ == "__main__":
 			# Detect objects using the object detection function
 			is_object, object_type, object_location = object_detection(rpi_chassis, img, detector)
 			num = 0
-			# If there is an object
-			for object in is_object:
-				print("There is an object!")
-				print("Type: " + object_type[num])
-				print("Location: " + object_location[num])
-				num += 1
-			else:
-				# Otherwise there is no object
+			# If there is no object in frame we want the robot to move forward
+			if is_object == False:
 				print("No object detected!")
+				rpi_chassis.forward(10)
+			else:
+				#if there are any objects in detected we want it to stop  print info on all detected
+				rpi_chassis.stop()
+				while num < len(is_object):
+					rpi_chassis.stop()
+					print("There is an object!")
+					print("Type: " + object_type[num])
+					print("Location: " + object_location[num])
+					num += 1
+
 			print("The number of objects detected was: " + str(num))
 			print("Elasped time: " + str(time.time()-start_time))
 			# Get the coordinates from the gps
@@ -204,9 +213,9 @@ if __name__ == "__main__":
 			# Release image cache
 			raw_capture.truncate(0)
 
-			k = cv2.waitKey(1) & 0xFF
-			if k == 27:
-				break
+			#k = cv2.waitKey(1) & 0xFF
+			#if k == 27:
+			#	break
 
 		# Exit the while loop
 		break
