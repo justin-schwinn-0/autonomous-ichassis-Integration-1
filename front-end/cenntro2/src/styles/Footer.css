@@ -1,0 +1,44 @@
+.footer {
+    width: 100%;
+    height: 200px;
+    background-color: #121619;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding-top: 10px;
+    
+  }
+
+  .footer p{
+    color:white;
+  }
+
+  .footer .socialMedia{
+    width: 80%;
+    height: 100px;
+    background-color: inherit;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+  }
+
+  .socialMedia svg {
+    display: flexbox;
+    flex-direction: row;
+    justify-content: center;
+    color: white;
+    margin: 20px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  .socialMedia p{
+    color:white;
+  }
+  
+  
+
+  .footer .copy {
+    color: white;
+  }
