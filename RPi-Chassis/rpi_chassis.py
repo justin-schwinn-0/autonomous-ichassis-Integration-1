@@ -141,8 +141,26 @@ def get_magnetometer():
 
 
 # This is where the primary repeated navigation code will reside, for now it is a place holder
-def navigation(object, long, lat):
-	return 'Forward'
+def navigation(objects, cur_coord, goal_coord):
+	# Get the objects
+	is_object, object_type, object_location = objects
+	# The current count
+	count_obj = 0
+	# If there is no object in frame we want the robot to move forward
+	if is_object == False:
+		print("No object detected!")
+		rpi_chassis.forward(10)
+	else:
+		# if there are any objects in detected we want it to stop print info on all detected
+		rpi_chassis.stop()
+		while count_obj < len(is_object):
+			rpi_chassis.stop()
+			print("There is an object!")
+			print("Type: " + object_type[count_obj])
+			print("Location: " + object_location[num])
+			count_obj += 1
+
+	print("The number of objects detected was: " + str(count_obj))
 
 # This is the main driver function
 if __name__ == "__main__":
@@ -162,60 +180,46 @@ if __name__ == "__main__":
 	print("Finished initializing")
 	print("Elasped time: " + str(time.time()-start_time))
 	# Our infinate loop for continuous object-detection and navigation
-	while True:
-		# Get continuous input from our camera NOTE: This is also an infiniate loop!
-		boption = core.BaseOptions(file_name='tf_lite_models/efficientdet_lite0.tflite', use_coral=True, num_threads=2)
-		doption = processor.DetectionOptions(max_results=num_objects, score_threshold=0.6)
-		options = vision.ObjectDetectorOptions(base_options=boption, detection_options=doption)
-		detector = vision.ObjectDetector.create_from_options(options)
-		#rpi_chassis.stop()
-		for frame in rpi_camera.capture_continuous(raw_capture, format='bgr', use_video_port=True):
-			print("\n\nBeginning of loop:")
-			print("Elasped time: " + str(time.time()-start_time))
-			# Convert our image into an array
-			img = frame.array
-			# Detect objects using the object detection function
-			is_object, object_type, object_location = object_detection(rpi_chassis, img, detector)
-			num = 0
-			# If there is no object in frame we want the robot to move forward
-			if is_object == False:
-				print("No object detected!")
-				rpi_chassis.forward(10)
-			else:
-				#if there are any objects in detected we want it to stop  print info on all detected
-				rpi_chassis.stop()
-				while num < len(is_object):
-					rpi_chassis.stop()
-					print("There is an object!")
-					print("Type: " + object_type[num])
-					print("Location: " + object_location[num])
-					num += 1
+	# Get continuous input from our camera NOTE: This is also an infiniate loop!
+	boption = core.BaseOptions(file_name='tf_lite_models/efficientdet_lite0.tflite', use_coral=True, num_threads=2)
+	doption = processor.DetectionOptions(max_results=num_objects, score_threshold=0.6)
+	options = vision.ObjectDetectorOptions(base_options=boption, detection_options=doption)
+	detector = vision.ObjectDetector.create_from_options(options)
+	#rpi_chassis.stop()
+	for frame in rpi_camera.capture_continuous(raw_capture, format='bgr', use_video_port=True):
+		print("\n\nBeginning of loop:")
+		print("Elasped time: " + str(time.time()-start_time))
+		# Convert our image into an array
+		img = frame.array
+		# Detect objects using the object detection function
+		objects = object_detection(rpi_chassis, img, detector)
 
-			print("The number of objects detected was: " + str(num))
-			print("Elasped time: " + str(time.time()-start_time))
-			# Get the coordinates from the gps
-			latitude, longitude = GPS.get_coordinates()
-			# Print the latitude and longitude
-			print("Latitude: ", latitude)
-			print("Longitude: ", longitude)
+		print("Elasped time: " + str(time.time()-start_time))
+		# Get the coordinates from the gps
+		latitude, longitude = GPS.get_coordinates()
+		# Print the latitude and longitude
+		print("Latitude: ", latitude)
+		print("Longitude: ", longitude)
 
-			print("Elasped time: " + str(time.time()-start_time))
-			# Get the course and speed
-			course, speed = GPS.get_course_speed()
-			# Print the course and speed
-			print("Course: ", course)
-			print("Speed: ", speed)
+		print("Elasped time: " + str(time.time()-start_time))
+		# Get the course and speed
+		course, speed = GPS.get_course_speed()
+		# Print the course and speed
+		print("Course: ", course)
+		print("Speed: ", speed)
 
-			print("Elasped time: " + str(time.time()-start_time))
+		print("Elasped time: " + str(time.time()-start_time))
+		cur_coord = (latitude, longitude)
+		goal_coord = (0,0)
+		navigation(objects, cur_coord, goal_coord)
 
-			# Show the image
-			#cv2.imshow('RPi Camera', img)
-			# Release image cache
-			raw_capture.truncate(0)
+		print("Elasped time: " + str(time.time() - start_time))
 
-			#k = cv2.waitKey(1) & 0xFF
-			#if k == 27:
-			#	break
+		# Show the image
+		#cv2.imshow('RPi Camera', img)
+		# Release image cache
+		raw_capture.truncate(0)
 
-		# Exit the while loop
-		break
+		#k = cv2.waitKey(1) & 0xFF
+		#if k == 27:
+		#	break
