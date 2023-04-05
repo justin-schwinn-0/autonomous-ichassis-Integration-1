@@ -51,24 +51,24 @@ def get_obj_location(boxLocation):
 	x = x_origin + x_len
 	y = y_origin + y_len
 	#Determining the location using the center of the object
-	if x < 320:
-		if y < 240:
+	if x < 213:
+		if y < 213:
 			local = "Top Left"
-		elif y == 240:
+		elif y < 426:
 			local = "Center Left"
 		else:
 			local = "Bottom Left"
-	elif x == 320:
-		if y < 240:
+	elif x < 426:
+		if y < 213:
 			local = "Top Middle"
-		elif y == 240:
+		elif y < 426:
 			local = "True Middle"
 		else:
 			local = "Bottom Middle"
 	else:
-		if y < 240:
+		if y < 213:
 			local = "Top Right"
-		elif y == 240:
+		elif y < 426:
 			local = "Center Right"
 		else:
 			local = "Bottom Right"
@@ -142,25 +142,9 @@ def get_magnetometer():
 
 # This is where the primary repeated navigation code will reside, for now it is a place holder
 def navigation(objects, cur_coord, goal_coord):
-	# Get the objects
-	is_object, object_type, object_location = objects
-	# The current count
-	count_obj = 0
-	# If there is no object in frame we want the robot to move forward
-	if is_object == False:
-		print("No object detected!")
-		rpi_chassis.forward(10)
-	else:
-		# if there are any objects in detected we want it to stop print info on all detected
-		rpi_chassis.stop()
-		while count_obj < len(is_object):
-			rpi_chassis.stop()
-			print("There is an object!")
-			print("Type: " + object_type[count_obj])
-			print("Location: " + object_location[num])
-			count_obj += 1
+	return "forward" or "left" or "right" or "backward" or "left_backward" or "right_backward"
 
-	print("The number of objects detected was: " + str(count_obj))
+
 
 # This is the main driver function
 if __name__ == "__main__":
@@ -192,7 +176,47 @@ if __name__ == "__main__":
 		# Convert our image into an array
 		img = frame.array
 		# Detect objects using the object detection function
-		objects = object_detection(rpi_chassis, img, detector)
+		is_object, object_type, object_location = object_detection(rpi_chassis, img, detector)
+		movement = navigation(object, 0, 0)
+		# The current count
+		count_obj = 0
+		# If there is no object in frame we want the robot to move forward
+		if is_object:
+			# if there are any objects in detected we want it to stop print info on all detected
+			rpi_chassis.stop()
+			while count_obj < len(is_object):
+				#rpi_chassis.stop()
+				print("There is an object!")
+				print("Type: " + object_type[count_obj])
+				print("Location: " + object_location[count_obj])
+				if "Right" in object_location[count_obj]:
+					rpi_chassis.steer_left()
+					rpi_chassis.forward(5)
+				elif "Left" in object_location[count_obj]:
+					rpi_chassis.steer_right()
+					rpi_chassis.forward(5)
+				count_obj += 1
+
+
+		else:
+			print("No object detected!")
+			if movement == 'forward':
+				rpi_chassis.steer_straight()
+				rpi_chassis.forward(5)
+			elif movement == 'left':
+				# To turn left we steer left and move forward for 1.5 seconds
+				rpi_chassis.steer_left()
+				start_time = time.time()
+				# Until we hit 1.5 seconds, move forward, while checking for objects
+				while not ((time.time() - start_time) == 1.5):
+					move(o)
+			elif movement == 'right':
+				rpi_chassis.steer_right()
+				rpi_chassis.forward(5)
+			elif movement == 'backward':
+				rpi_chassis.backward(5)
+
+		print("The number of objects detected was: " + str(count_obj))
 
 		print("Elasped time: " + str(time.time()-start_time))
 		# Get the coordinates from the gps
@@ -211,7 +235,7 @@ if __name__ == "__main__":
 		print("Elasped time: " + str(time.time()-start_time))
 		cur_coord = (latitude, longitude)
 		goal_coord = (0,0)
-		navigation(objects, cur_coord, goal_coord)
+
 
 		print("Elasped time: " + str(time.time() - start_time))
 
