@@ -49,9 +49,9 @@ from picamera.array import PiRGBArray
 # Import Open CV
 import cv2
 # Import our IMU script
-import rpi_imu
+from rpi_imu import IMU
 # Import our GPS script
-import rpi_gps
+from rpi_gps import GPS
 
 # Prints the welcome message to the user with keypress directions
 def print_welcome():
