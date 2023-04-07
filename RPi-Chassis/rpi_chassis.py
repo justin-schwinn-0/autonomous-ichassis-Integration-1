@@ -4,21 +4,23 @@ The live navigation and object detection will reside within this program.
 '''
 
 # Our required libaries
-import time 							# Used to sleep
-from picarx import Picarx 				# Import our Picarx object
-from picamera import PiCamera			# Import our Picamera object
-from picamera.array import PiRGBArray  # Import the RGB array for picamera
-import cv2								# Import opencv, used for object detection/image proccessing
+import time 				# Used to sleep
+from picarx import Picarx 		# Import our Picarx object
+from picamera import PiCamera		# Import our Picamera object
+from picamera.array import PiRGBArray  	# Import the RGB array for picamera
+import cv2				# Import opencv, used for object detection/image proccessing
 import rpi_imu				# Import our IMU script
-from rpi_gps import GPS								# Import our GPS script
+from rpi_gps import GPS			# Import our GPS script
 # Import tflite, used for running an object-detection model
 from tflite_support.task import core
 from tflite_support.task import processor
 from tflite_support.task import vision
 
 #Making these easy to change so that its easier to test
-num_objects = 3 #number of objects the camera will detect
-avoid_objects = ["person", "car"] #add things that robot should detect / avoid
+NUM_OBJECTS = 3 # number of objects the camera will detect
+AVOID_OBJECTS = ["person", "car", "Ultrasonic"] # add things that robot should detect / avoid
+
+
 # This is a helper function for object_detection. It reads in RPi Chassis object and a tuple.
 # It will then update the tuple based on the ultrasonic sensors output
 def ultrasonic_detect(rpi_chassis, objects):
@@ -31,7 +33,7 @@ def ultrasonic_detect(rpi_chassis, objects):
 	# If the distance is less than 30, we have detected an object!
 	if distance < 30:
 		# Set our tuple that an object has been detected
-		objects.append((True,"Ultrasonic", "Center","Bottom"))
+		objects.append((True,"Ultrasonic", "Center","Bottom", "300", "300"))
 
 	return objects
 
@@ -82,9 +84,6 @@ def camera_detect(img, objects, detector):
 	dobject = detector.detect(input)
 	#print("dobject: " + str(dobject))
 	#object_detected = dobject.detections
-	#is_found = []
-	#obj_type = []
-	#locat = []
 	if dobject.detections:
 		for obj in dobject.detections:
 			object_detected = dobject.detections[0]
@@ -98,25 +97,17 @@ def camera_detect(img, objects, detector):
 			#print("obj_type: " + str(obj_type))
 			x, y = get_obj_location(obj_loc)
 			#print("locat: " + str(locat))
-			objects.append((True, obj_type, str(x), str(y)))		
+			objects.append((True, obj_type, str(x), str(y), obj.bounding_box.width, obj.bounding_box.height))		
 	return objects
 
-'''
-def clean_cam_objects(objects):
-	# For every object in the objects list	
-	for object in objects:
-		obj_found, obj_type, obj_loc = object
-		print("Object Type: + str(obj_type))
-		
-		# If it is not a person, remove
-		if not obj_type == 'person':
-'''			
+
 
 def object_detection(rpi_chassis, img, detector):
 	#print("In object-detection")
 
 	# This is what our function will return
-	# List of (True/False if object detected, Type of object, Location of Object)
+	# List of (True/False if object detected, Type of object, X Location of object, Y Location of object, 
+	# Width in pixels of object, Height in pixels of object)
 	objects = []
 
 
@@ -127,7 +118,7 @@ def object_detection(rpi_chassis, img, detector):
 	objects = camera_detect(img, objects, detector)
 
 	if len(objects) == 0:
-		objects.append((False, "Unknown", "Unknown", "Unknown"))
+		objects.append((False, "Unknown", 0, 0, 0, 0))
 	# Return the objects information
 	return objects
 
@@ -191,35 +182,36 @@ if __name__ == "__main__":
 	print("Finished initializing")
 	print("Elasped time: " + str(time.time()-start_time))
 	# Our infinate loop for continuous object-detection and navigation
-	# Get continuous input from our camera NOTE: This is also an infiniate loop!
+	# Get continuous input from our camera, it is an infinate loop!
 	boption = core.BaseOptions(file_name='tf_lite_models/efficientdet_lite0.tflite', use_coral=True, num_threads=2)
-	doption = processor.DetectionOptions(max_results=num_objects, score_threshold=0.6)
+	doption = processor.DetectionOptions(max_results=NUM_OBJECTS, score_threshold=0.6)
 	options = vision.ObjectDetectorOptions(base_options=boption, detection_options=doption)
 	detector = vision.ObjectDetector.create_from_options(options)
-	#rpi_chassis.stop()
 	for frame in rpi_camera.capture_continuous(raw_capture, format='bgr', use_video_port=True):
 		print("\n\nBeginning of loop:")
 		print("Elasped time: " + str(time.time()-start_time))
 		# Convert our image into an array
 		img = frame.array
+		# Our list of objects, each object is (True/False, Type, X_location, Y_location, size)
 		objects = object_detection(rpi_chassis, img, detector)
 
 		cur_move = 'forward' # our default movement
 		# For every object given, decide how to move
 		for object in objects:
-			is_object, type, x_loc, y_loc = object
+			is_object, type, x_loc, y_loc, width, height = object
 			#If nothing is detected or the object is not a Person move forward
 			if not is_object:
 				break
 			elif type == 'Ultrasonic':
 				cur_move = 'stop'
-			elif type not in avoid_objects:
+			elif type not in AVOID_OBJECTS or (width < 100 and height < 200):
 				print("Non-Threatening Object: " + str(type))
 				break
 			else:
 				print("There is an object!")
 				print("Object Type: " + str(type))
 				print("Object Location: " + str(x_loc) + " " + str(y_loc))
+				print("Object Size: " + str(width) + "W " + str(height) + "H")
 			
 				# If object is on the right, move left
 				if x_loc == "Right":
@@ -247,12 +239,9 @@ if __name__ == "__main__":
 				else:
 					#print("Object not a threat, move forward")
 					cur_move = 'forward'
-		#I commented this out because I thought there may be a chance of it moving after detecting an object, but before the object moved (specifically things directly in front of it)
-		#rpi_chassis.forward(5)		
-		#print("The number of objects detected was: " + str(len(objects)))
-
-		# Start moving!
-		move(rpi_chassis, cur_move)
+		
+		# Start moving
+		#move(rpi_chassis, cur_move)
 		'''
 		print("Elasped time: " + str(time.time()-start_time))
 		# Get the coordinates from the gps
@@ -276,7 +265,7 @@ if __name__ == "__main__":
 		print("Elasped time: " + str(time.time() - start_time))
 
 		# Slow down output
-		#time.sleep(1)
+		time.sleep(1)
 		# Show the image
 		#cv2.imshow('RPi Camera', img)
 		# Release image cache
