@@ -166,111 +166,123 @@ def move(rpi_chassis, direction):
 
 # This is the main driver function
 if __name__ == "__main__":
-	print("Starting RPi-Chassis")
-	start_time = time.time()
-	# Initialize the PicarX object for our RPi Chassis
-	rpi_chassis = Picarx()
-	# Initilize the Picamera object
-	rpi_camera = PiCamera()
-	# Set the camera's resolution and framerate
-	rpi_camera.resolution = (640,480) 	# Our camera can support other but at slower FPS
-	rpi_camera.framerate = 90			# Our camera can support 90 fps
-	# Create our rgb array for camera
-	raw_capture = PiRGBArray(rpi_camera, size=rpi_camera.resolution)
-	# Allow the camera to warm up
-	time.sleep(2)
-	print("Finished initializing")
-	print("Elasped time: " + str(time.time()-start_time))
-	# Our infinate loop for continuous object-detection and navigation
-	# Get continuous input from our camera, it is an infinate loop!
-	boption = core.BaseOptions(file_name='tf_lite_models/efficientdet_lite0.tflite', use_coral=True, num_threads=2)
-	doption = processor.DetectionOptions(max_results=NUM_OBJECTS, score_threshold=0.6)
-	options = vision.ObjectDetectorOptions(base_options=boption, detection_options=doption)
-	detector = vision.ObjectDetector.create_from_options(options)
-	for frame in rpi_camera.capture_continuous(raw_capture, format='bgr', use_video_port=True):
-		print("\n\nBeginning of loop:")
+	# This try helps smoothly stop the program (making sure to stop the car)
+	# Anytime there is an exception/CTRL+C
+	try:
+		print("Starting RPi-Chassis")
+		start_time = time.time()
+		# Initialize the PicarX object for our RPi Chassis
+		rpi_chassis = Picarx()
+		# Initilize the Picamera object
+		rpi_camera = PiCamera()
+		# Set the camera's resolution and framerate
+		rpi_camera.resolution = (640,480) 	# Our camera can support other but at slower FPS
+		rpi_camera.framerate = 90			# Our camera can support 90 fps
+		# Create our rgb array for camera
+		raw_capture = PiRGBArray(rpi_camera, size=rpi_camera.resolution)
+		# Allow the camera to warm up
+		time.sleep(2)
+		print("Finished initializing")
 		print("Elasped time: " + str(time.time()-start_time))
-		# Convert our image into an array
-		img = frame.array
-		# Our list of objects, each object is (True/False, Type, X_location, Y_location, size)
-		objects = object_detection(rpi_chassis, img, detector)
+		# Our infinate loop for continuous object-detection and navigation
+		# Get continuous input from our camera, it is an infinate loop!
+		boption = core.BaseOptions(file_name='tf_lite_models/efficientdet_lite0.tflite', use_coral=True, num_threads=2)
+		doption = processor.DetectionOptions(max_results=NUM_OBJECTS, score_threshold=0.6)
+		options = vision.ObjectDetectorOptions(base_options=boption, detection_options=doption)
+		detector = vision.ObjectDetector.create_from_options(options)
+		for frame in rpi_camera.capture_continuous(raw_capture, format='bgr', use_video_port=True):
+			print("\n\nBeginning of loop:")
+			print("Elasped time: " + str(time.time()-start_time))
+			# Convert our image into an array
+			img = frame.array
+			# Our list of objects, each object is (True/False, Type, X_location, Y_location, size)
+			objects = object_detection(rpi_chassis, img, detector)
 
-		cur_move = 'forward' # our default movement
-		# For every object given, decide how to move
-		for object in objects:
-			is_object, type, x_loc, y_loc, width, height = object
-			#If nothing is detected or the object is not a Person move forward
-			if not is_object:
-				break
-			elif type == 'Ultrasonic':
-				cur_move = 'stop'
-			elif type not in AVOID_OBJECTS or (width < 100 and height < 200):
-				print("Non-Threatening Object: " + str(type))
-				break
-			else:
-				print("There is an object!")
-				print("Object Type: " + str(type))
-				print("Object Location: " + str(x_loc) + " " + str(y_loc))
-				print("Object Size: " + str(width) + "W " + str(height) + "H")
-			
-				# If object is on the right, move left
-				if x_loc == "Right":
-					# If we have previously detected an object on the left, stop
-					if cur_move == 'stop' or cur_move == 'right':
-						cur_move = 'stop'
-						#print("Detected object on right and left, stopping.")
-					# Otherwise we just move to the left
-					else:
-						cur_move = 'left'
-						#print("Move left")
-				elif x_loc == "Left": 
-					# If we have previously detected an object on the right, stop
-					if cur_move == 'stop' or cur_move == 'left':
-						cur_move = 'stop'
-						#print("Detected object on the left and right, stopping.")
-					# Otherwise we jsut move to the right
-					else:
-						cur_move = 'right'
-						#print("Move right")
-				elif x_loc == "Center":
-					#print("Stopping")
+			cur_move = 'forward' # our default movement
+			# For every object given, decide how to move
+			for object in objects:
+				is_object, type, x_loc, y_loc, width, height = object
+				#If nothing is detected or the object is not a Person move forward
+				if not is_object:
+					break
+				elif type == 'Ultrasonic':
 					cur_move = 'stop'
+				elif type not in AVOID_OBJECTS or (width < 100 and height < 200):
+					print("Non-Threatening Object: " + str(type))
 					break
 				else:
-					#print("Object not a threat, move forward")
-					cur_move = 'forward'
-		
-		# Start moving
-		#move(rpi_chassis, cur_move)
-		'''
-		print("Elasped time: " + str(time.time()-start_time))
-		# Get the coordinates from the gps
-		latitude, longitude = GPS.get_coordinates()
-		# Print the latitude and longitude
-		print("Latitude: ", latitude)
-		print("Longitude: ", longitude)
+					print("There is an object!")
+					print("Object Type: " + str(type))
+					print("Object Location: " + str(x_loc) + " " + str(y_loc))
+					print("Object Size: " + str(width) + "W " + str(height) + "H")
 
-		print("Elasped time: " + str(time.time()-start_time))
-		# Get the course and speed
-		course, speed = GPS.get_course_speed()
-		# Print the course and speed
-		print("Course: ", course)
-		print("Speed: ", speed)
+					# If object is on the right, move left
+					if x_loc == "Right":
+						# If we have previously detected an object on the left, stop
+						if cur_move == 'stop' or cur_move == 'right':
+							cur_move = 'stop'
+							#print("Detected object on right and left, stopping.")
+						# Otherwise we just move to the left
+						else:
+							cur_move = 'left'
+							#print("Move left")
+					elif x_loc == "Left":
+						# If we have previously detected an object on the right, stop
+						if cur_move == 'stop' or cur_move == 'left':
+							cur_move = 'stop'
+							#print("Detected object on the left and right, stopping.")
+						# Otherwise we jsut move to the right
+						else:
+							cur_move = 'right'
+							#print("Move right")
+					elif x_loc == "Center":
+						#print("Stopping")
+						cur_move = 'stop'
+						break
+					else:
+						#print("Object not a threat, move forward")
+						cur_move = 'forward'
 
-		print("Elasped time: " + str(time.time()-start_time))
-		cur_coord = (latitude, longitude)
-		goal_coord = (0,0)
+			# Start moving
+			#move(rpi_chassis, cur_move)
+			'''
+			print("Elasped time: " + str(time.time()-start_time))
+			# Get the coordinates from the gps
+			latitude, longitude = GPS.get_coordinates()
+			# Print the latitude and longitude
+			print("Latitude: ", latitude)
+			print("Longitude: ", longitude)
+	
+			print("Elasped time: " + str(time.time()-start_time))
+			# Get the course and speed
+			course, speed = GPS.get_course_speed()
+			# Print the course and speed
+			print("Course: ", course)
+			print("Speed: ", speed)
+	
+			print("Elasped time: " + str(time.time()-start_time))
+			cur_coord = (latitude, longitude)
+			goal_coord = (0,0)
+	
+			'''
+			print("Elasped time: " + str(time.time() - start_time))
 
-		'''
-		print("Elasped time: " + str(time.time() - start_time))
+			# Slow down output
+			#time.sleep(1)
+			# Show the image
+			#cv2.imshow('RPi Camera', img)
+			# Release image cache
+			raw_capture.truncate(0)
 
-		# Slow down output
-		time.sleep(1)
-		# Show the image
-		#cv2.imshow('RPi Camera', img)
-		# Release image cache
-		raw_capture.truncate(0)
+			#k = cv2.waitKey(1) & 0xFF
+			#if k == 27:
+			#	break
 
-		#k = cv2.waitKey(1) & 0xFF
-		#if k == 27:
-		#	break
+	except KeyBoardInterrupt:
+		rpi_chassis = Picarx()
+		rpi_chassis.stop()
+		print("Exiting...")
+	except Exception as e:
+		rpi_chassis = Picarx()
+		rpi_chassis.stop()
+		print(e)
