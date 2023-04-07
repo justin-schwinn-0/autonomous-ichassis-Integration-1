@@ -278,11 +278,7 @@ if __name__ == "__main__":
 			#if k == 27:
 			#	break
 
-	except KeyBoardInterrupt:
+	except:
 		rpi_chassis = Picarx()
 		rpi_chassis.stop()
 		print("Exiting...")
-	except Exception as e:
-		rpi_chassis = Picarx()
-		rpi_chassis.stop()
-		print(e)
