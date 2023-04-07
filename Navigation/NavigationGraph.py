@@ -8,7 +8,8 @@ class NavGraph:
     def setNodes(self, nodes):
         self.Nodes = nodes
         pass
-
+    
+    # AddPaths() adds a connection between two nodes
     def AddPaths(self, A:int,B):
         for e in B:
             self.Nodes[A].addConnection(e)
@@ -63,19 +64,21 @@ class PathingData:
         for i in range(self.length):
             self.Distances.append(self.length+1)
             self.Visited.append(False)
-
+   
+    # StartAt() EnqueueVisits() and DoVisits() are all for Dijkstras
     def StartAt(self, end:int):
         self.Visited[end] = True
         self.Distances[end] = 0
         self.EnqueueVisits(self.Nodes[end].ConnectionsList())
 
-    
+    # Lets us do breadth first search, the data structure for breadth first search.
     def EnqueueVisits(self, ps):
         for p in ps:
             if(not self.Visited[p]):
                 self.Visited[p] = True
                 self.nodeQueue.append(p)
-    
+   
+    # The main dijkstras.
     def DoVisit(self):
         index = self.nodeQueue.pop(0)
         distToCheck = []
@@ -84,7 +87,8 @@ class PathingData:
         min_ConnectedDist = min(distToCheck)
         self.Distances[index] = min_ConnectedDist + 1
         self.EnqueueVisits(self.Nodes[index].ConnectionsList())
-
+    
+    # Gets a list of distances for all the neighbors for startingFrom
     def getFullDistances(self,StartingFrom:int):
         self.StartAt(StartingFrom)
 
