@@ -116,7 +116,7 @@ def convert_latitude(raw_lat, dir):
 
     # Next we will convert 'mm.mmmm' to '.dddd' by dividing by 60
     dddd = float(mm_mmmm) / 60
-    dddd = float("{:.4f}".format(dddd))
+    #dddd = float("{:.4f}".format(dddd))
     #print("dddd: " + str(dddd))
 
     # Add the dd and .dddd together
@@ -146,7 +146,7 @@ def convert_longitude(raw_lon, dir):
 
     # Next we will convert 'mm.mmmm' to 'dd.dddd' by dividing by 60
     dd_dddd = float(mm_mmmm) / 60
-    dd_dddd = float("{:.4f}".format(dd_dddd))
+    #dd_dddd = float("{:.4f}".format(dd_dddd))
     #print("dd_dddd: " + str(dd_dddd))
 
     # Add the ddd and dd.dddd together
