@@ -1,14 +1,7 @@
-import os,sys
-sys.path.append("./Navigation")
-sys.path.append("./RPi-Chassis")
-#might need to change these if bridgette switched around the folders
-
 from NavigationGraph import NavGraph
-from NavAtomicClasses import *
-import GPS
+from NavAtomicClasses import Node
 import math
 
-piCar = Picarx()
 
 def AngleFromAToB(a,b)-> float:
     ax,ay = a.getLocation()

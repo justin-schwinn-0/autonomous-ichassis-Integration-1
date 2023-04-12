@@ -3,18 +3,26 @@ from NavAtomicClasses import Node
 class NavGraph:
     def __init__(self) -> None:
         self.Nodes = []
+        self.labels= {}
         pass
 
     def setNodes(self, nodes):
         self.Nodes = nodes
         pass
-    
-    # AddPaths() adds a connection between two nodes
+
     def AddPaths(self, A:int,B):
         for e in B:
             self.Nodes[A].addConnection(e)
             self.Nodes[e].addConnection(A)
         pass
+
+    def CookLabels(self):
+        for i,n in enumerate(self.Nodes):
+            if(n.label != ""):
+                self.labels[n.label] = i
+
+    def getIndexFromLabel(self, label)->int:
+        return self.labels.get(label)
 
     def PathFromAtoB(self, A ,B):
         distances = PathingData(self.Nodes).getFullDistances(StartingFrom=B)
@@ -64,21 +72,19 @@ class PathingData:
         for i in range(self.length):
             self.Distances.append(self.length+1)
             self.Visited.append(False)
-   
-    # StartAt() EnqueueVisits() and DoVisits() are all for Dijkstras
+
     def StartAt(self, end:int):
         self.Visited[end] = True
         self.Distances[end] = 0
         self.EnqueueVisits(self.Nodes[end].ConnectionsList())
 
-    # Lets us do breadth first search, the data structure for breadth first search.
+    
     def EnqueueVisits(self, ps):
         for p in ps:
             if(not self.Visited[p]):
                 self.Visited[p] = True
                 self.nodeQueue.append(p)
-   
-    # The main dijkstras.
+    
     def DoVisit(self):
         index = self.nodeQueue.pop(0)
         distToCheck = []
@@ -87,8 +93,7 @@ class PathingData:
         min_ConnectedDist = min(distToCheck)
         self.Distances[index] = min_ConnectedDist + 1
         self.EnqueueVisits(self.Nodes[index].ConnectionsList())
-    
-    # Gets a list of distances for all the neighbors for startingFrom
+
     def getFullDistances(self,StartingFrom:int):
         self.StartAt(StartingFrom)
 
@@ -121,14 +126,15 @@ def ReadGraphFromFile(fn:str) -> NavGraph:
             dataLine = f.readline()
             nodeList[i].resetDatawStr(dataLine)
 
-    graph.setNodes(nodeList)
-    return graph
+        graph.setNodes(nodeList)
+        graph.CookLabels()
+        return graph
 
 def baseTestCase():
-    nodes =[]
+    nodes = []
 
     for i in range(11):
-        nodes.append(Node("x",i+0.1,i+0.5,str(i)))
+        nodes.append(Node("x",i+0.1,i+0.5,"spot "+str(i)))
 
     graph = NavGraph()
 
@@ -157,6 +163,12 @@ def baseTestCase():
     path2 = graph2.PathFromAtoB(0,10)
 
     print(path2)
+
+    graph.CookLabels()
+
+    print(graph.labels)
+    print(graph.getIndexFromLabel("spot 0"))
+
 
 if __name__ == "__main__":
     
