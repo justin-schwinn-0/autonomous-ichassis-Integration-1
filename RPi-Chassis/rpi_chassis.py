@@ -3,8 +3,12 @@ This is rpi-chassis.py. It is the primary program that runs the RPi Chassis.
 The live navigation and object detection will reside within this program.
 '''
 
+import os,sys
+sys.path.append("../Navigation")
+
 # Our required libaries
 import time 				# Used to sleep
+import NavigationGraph
 from picarx import Picarx 		# Import our Picarx object
 from picamera import PiCamera		# Import our Picamera object
 from picamera.array import PiRGBArray  	# Import the RGB array for picamera
@@ -19,7 +23,10 @@ from tflite_support.task import vision
 #Making these easy to change so that its easier to test
 NUM_OBJECTS = 3 # number of objects the camera will detect
 AVOID_OBJECTS = ["person", "car", "Ultrasonic"] # add things that robot should detect / avoid
-
+GL_LogStr = str()
+GL_start_time = time.perf_counter()
+GL_previous_time = GL_start_time
+GL_curr_time = GL_start_time
 
 # This is a helper function for object_detection. It reads in RPi Chassis object and a tuple.
 # It will then update the tuple based on the ultrasonic sensors output
@@ -140,7 +147,20 @@ def get_magnetometer():
 
 
 # This is where the primary repeated navigation code will reside, for now it is a place holder
-def navigation(objects, cur_coord, goal_coord):
+# goalSpot is a string that contains the label of the targeted spot
+
+def navigation(objects, cur_coord, goalSpot):
+
+	#go if object detection is good
+
+	if(objects[0]): # don't move if object detected = true
+		return
+	
+
+	
+	
+	#follow navigation
+
 	return "forward" or "left" or "right" or "backward" or "left_backward" or "right_backward"
 
 
@@ -164,13 +184,38 @@ def move(rpi_chassis, direction):
 		# If any unknown direction is given ignore it
 		return
 
+	def getUpdateTime():
+		return GL_curr_time - GL_previous_time
+
+	def printTime(type = "Elapsed"):
+		if(type == "Elapsed"):
+			LOGSTR += f"Elasped Time: {GL_curr_time - GL_start_time} "
+		elif (type == "update"):
+			LOGSTR += f"Update Time: {GL_curr_time - GL_previous_time} "
+					
+	def iterateTime():
+		previous_time = curr_time
+		curr_time = time.perf_counter
+
+	def addToLog(line:str):
+		GL_LogStr += line
+	
+	def PrintLog():
+		print(GL_LogStr)
+		GL_LogStr = ""
+		
+
 # This is the main driver function
 if __name__ == "__main__":
 	# This try helps smoothly stop the program (making sure to stop the car)
 	# Anytime there is an exception/CTRL+C
 	try:
 		print("Starting RPi-Chassis")
-		start_time = time.time()
+
+		# read the graph from file
+		navGraph = NavigationGraph.ReadGraphFromFile("ParkingLotGraph.txt") 
+
+		GL_previous_time = time.perf_counter()
 		# Initialize the PicarX object for our RPi Chassis
 		rpi_chassis = Picarx()
 		# Initilize the Picamera object
@@ -182,8 +227,8 @@ if __name__ == "__main__":
 		raw_capture = PiRGBArray(rpi_camera, size=rpi_camera.resolution)
 		# Allow the camera to warm up
 		time.sleep(2)
-		print("Finished initializing")
-		print("Elasped time: " + str(time.time()-start_time))
+		addToLog("Finished initializing")
+		printTime()
 		# Our infinate loop for continuous object-detection and navigation
 		# Get continuous input from our camera, it is an infinate loop!
 		boption = core.BaseOptions(file_name='tf_lite_models/efficientdet_lite0.tflite', use_coral=True, num_threads=2)
@@ -191,8 +236,7 @@ if __name__ == "__main__":
 		options = vision.ObjectDetectorOptions(base_options=boption, detection_options=doption)
 		detector = vision.ObjectDetector.create_from_options(options)
 		for frame in rpi_camera.capture_continuous(raw_capture, format='bgr', use_video_port=True):
-			print("\n\nBeginning of loop:")
-			print("Elasped time: " + str(time.time()-start_time))
+			addToLog("\n\nBeginning of loop:")
 			# Convert our image into an array
 			img = frame.array
 			# Our list of objects, each object is (True/False, Type, X_location, Y_location, size)
@@ -208,13 +252,13 @@ if __name__ == "__main__":
 				elif type == 'Ultrasonic':
 					cur_move = 'stop'
 				elif type not in AVOID_OBJECTS or (width < 100 and height < 200):
-					print("Non-Threatening Object: " + str(type))
+					addToLog("Non-Threatening Object: " + str(type))
 					break
 				else:
-					print("There is an object!")
-					print("Object Type: " + str(type))
-					print("Object Location: " + str(x_loc) + " " + str(y_loc))
-					print("Object Size: " + str(width) + "W " + str(height) + "H")
+					addToLog("There is an object!")
+					addToLog("Object Type: " + str(type))
+					addToLog("Object Location: " + str(x_loc) + " " + str(y_loc))
+					addToLog("Object Size: " + str(width) + "W " + str(height) + "H")
 
 					# If object is on the right, move left
 					if x_loc == "Right":
@@ -265,7 +309,11 @@ if __name__ == "__main__":
 			goal_coord = (0,0)
 	
 			'''
-			print("Elasped time: " + str(time.time() - start_time))
+			printTime()
+
+			printLog()
+
+			iterateTime()
 
 			# Slow down output
 			#time.sleep(1)
