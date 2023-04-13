@@ -245,14 +245,15 @@ def NavigationTest():
 
 	time.sleep(0.5)
 	print("Finished initializing Navigation")
+	
 	printTime()
 
 	print(f"{path}")
-	printLog()
 
 	i = 0
 	while i < len(path):
 
+		print("in loop")
 		reachedTargetNode, DirectionToTurn = Traversal.TraverseToNodePICAR(GL_NavGraph,path[i],car)
 
 		if(reachedTargetNode):
