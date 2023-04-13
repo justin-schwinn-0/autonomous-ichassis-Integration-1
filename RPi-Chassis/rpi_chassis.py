@@ -3,8 +3,6 @@ This is rpi-chassis.py. It is the primary program that runs the RPi Chassis.
 The live navigation and object detection will reside within this program.
 '''
 
-import os,sys
-
 # Our required libaries
 import time 				# Used to sleep
 import NavigationGraph
@@ -20,18 +18,25 @@ from tflite_support.task import core
 from tflite_support.task import processor
 from tflite_support.task import vision
 
+import math
+
 #Making these easy to change so that its easier to test
 NUM_OBJECTS = 3 # number of objects the camera will detect
 AVOID_OBJECTS = ["person", "car", "Ultrasonic"] # add things that robot should detect / avoid
 
 TURN_AMOUNT = 15
-DEFAULT_SPEED = 5
+DEFAULT_SPEED = 50
+
+
 
 #these values help keep track of the picar physical location without use of the GPS
-RL_SPEED_FORWARD = DEFAULT_SPEED * 0.06 # temp value, change later
-RL_SPEED_TURNING = DEFAULT_SPEED * 0.03 # temp
+RL_SPEED_FORWARD = 0.4061 # m/s
+RL_SPEED_TURNING = DEFAULT_SPEED * 0.03 # kill me
 RL_ANGLE = 0 #temp
-RL_TURNING_RATE = 15 # temp, measure later
+RL_TURNING_RATE = 52.9411 # degrees /s
+RL_TURNING_CIRCLE_RADIUS = 0.915 / 2 #m
+RL_TURNING_SPEED = 2.87456 / 6.80 # m/s
+
 
 GL_LogStr = str('')
 GL_start_time = time.perf_counter()
@@ -178,6 +183,7 @@ def navigation(objects, cur_coord, goalSpot):
 # This function moves the rpi_chassis given a direction, for example forward, left, right, backward, etc
 def move(rpi_chassis, direction):
 	# If the direction is stop
+
 	if direction == 'stop':
 		# Stop the chassis
 		rpi_chassis.stop()
@@ -214,12 +220,53 @@ def printLog():
 	GL_LogStr = ""
 	pass
 
-def updateXY_NOGPS(direction):
-	time = getUpdateTime()
 
-	pass
+"""
+can you give me a python function that will calculate the new cartesian coordinate of a turning car, 
+given it's 
+	original X and Y location
+	original angle
+	Time
+	turning radius
+	velocity in m/s
+"""
 
-def updateAngle_ACC():
+def new_coordinate(x, y, angle_degrees, t, r, angular_velocity_degrees):
+    # Convert angular velocity from degrees to radians per second
+	angle = math.radians(angle_degrees)
+	angular_velocity = math.radians(angular_velocity_degrees)
+
+    # Calculate the new angle after turning for time t
+	new_angle = angle + angular_velocity * t
+
+    # Calculate the new X and Y coordinates
+	new_x = x + r * (math.sin(new_angle) - math.sin(angle))
+	new_y = y + r * (math.cos(angle) - math.cos(new_angle))
+
+    # Return a tuple containing the new X and Y coordinates
+	return (new_x, new_y)
+
+def updateXY_NOGPS(car:Traversal.Car,direction):
+	updateTime = getUpdateTime()
+	print(f"Dt: {updateTime}")
+
+
+
+	movX = 0
+	movY = 0
+
+	displacement = RL_SPEED_FORWARD * updateTime
+
+	if(direction == 'x'):
+		movX = displacement * math.cos(car.angle)
+		movX = displacement * math.sin(car.angle)
+	elif(direction == 'L'):
+
+		pass
+	elif(direction == 'R'):
+		pass
+
+def updateAngle_NOACC():
 	pass
 
 def NavInit():
@@ -255,6 +302,8 @@ def NavigationTest():
 
 		reachedTargetNode, DirectionToTurn = Traversal.TraverseToNodePICAR(graph,path[i],car)
 
+
+
 		if(reachedTargetNode):
 			i += 1
 			print(f"Node {i} reached")
@@ -266,6 +315,9 @@ def NavigationTest():
 				move(rpi_chassis,'left')
 			elif(DirectionToTurn == 'R'):
 				move(rpi_chassis,'right')
+			
+			updateXY_NOGPS(DirectionToTurn)
+
 				
 def ODinit():
 	print("Starting RPi-Chassis")
@@ -407,6 +459,9 @@ if __name__ == "__main__":
 	
 	print("test")
 
-	NavigationTest()
+	print(new_coordinate(0,0,90,4,4,30))
+	print(new_coordinate(0,0,90,4,4,-30))
+
+	#NavigationTest()
 
 	#ODtest()
