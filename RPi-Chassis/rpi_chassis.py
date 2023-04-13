@@ -46,7 +46,7 @@ def ultrasonic_detect(rpi_chassis, objects):
 
 	# Check if the ultrasonic sensor detects an object
 	distance = rpi_chassis.ultrasonic.read()
-	addToLog("Ultrasonic distance: " + str(distance))
+	print("Ultrasonic distance: " + str(distance))
 
 	# If the distance is less than 30, we have detected an object!
 	if distance < 30:
@@ -200,16 +200,14 @@ def getUpdateTime():
 
 def printTime(type = "Elapsed"):
 	if(type == "Elapsed"):
-		addToLog(f"Elasped Time: {GL_curr_time - GL_start_time} ")
+		print(f"Elasped Time: {GL_curr_time - GL_start_time} ")
 	elif (type == "update"):
-		addToLog(f"Update Time: {GL_curr_time - GL_previous_time} ")
+		print(f"Update Time: {GL_curr_time - GL_previous_time} ")
 				
 def iterateTime():
 	GL_previous_time = GL_curr_time
 	GL_curr_time = time.perf_counter
 
-def addToLog(line:str):
-	GL_LogStr += line
 
 def printLog():
 	print(GL_LogStr)
@@ -246,10 +244,10 @@ def NavigationTest():
 	curr_node = 0
 
 	time.sleep(0.5)
-	addToLog("Finished initializing Navigation")
+	print("Finished initializing Navigation")
 	printTime()
 
-	addToLog(f"{path}")
+	print(f"{path}")
 	printLog()
 
 	i = 0
@@ -259,7 +257,7 @@ def NavigationTest():
 
 		if(reachedTargetNode):
 			i += 1
-			addToLog(f"Node {i} reached")
+			print(f"Node {i} reached")
 			move(rpi_chassis,'stop')
 		else:
 			if(DirectionToTurn == 'x'):
@@ -287,7 +285,7 @@ def ODinit():
 	raw_capture = PiRGBArray(rpi_camera, size=rpi_camera.resolution)
 	# Allow the camera to warm up
 	time.sleep(1)
-	addToLog("Finished initializing")
+	print("Finished initializing")
 	printTime()
 	# Our infinate loop for continuous object-detection and navigation
 	# Get continuous input from our camera, it is an infinate loop!
@@ -308,7 +306,7 @@ def ODtest():
 			raw_capture, detector,rpi_chassis, rpi_camera = ODinit()
 
 			for frame in rpi_camera.capture_continuous(raw_capture, format='bgr', use_video_port=True):
-				addToLog("\n\nBeginning of loop:")
+				print("\n\nBeginning of loop:")
 				# Convert our image into an array
 				img = frame.array
 				# Our list of objects, each object is (True/False, Type, X_location, Y_location, size)
@@ -324,13 +322,13 @@ def ODtest():
 					elif type == 'Ultrasonic':
 						cur_move = 'stop'
 					elif  (width < 100 and height < 200) or type not in AVOID_OBJECTS:
-						addToLog("Non-Threatening Object: " + str(type))
+						print("Non-Threatening Object: " + str(type))
 						break
 					else:
-						addToLog("There is an object!")
-						addToLog("Object Type: " + str(type))
-						addToLog("Object Location: " + str(x_loc) + " " + str(y_loc))
-						addToLog("Object Size: " + str(width) + "W " + str(height) + "H")
+						print("There is an object!")
+						print("Object Type: " + str(type))
+						print("Object Location: " + str(x_loc) + " " + str(y_loc))
+						print("Object Size: " + str(width) + "W " + str(height) + "H")
 
 						# If object is on the right, move left
 						if x_loc == "Right":
