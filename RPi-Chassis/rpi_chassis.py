@@ -9,6 +9,7 @@ sys.path.append("../Navigation")
 # Our required libaries
 import time 				# Used to sleep
 import NavigationGraph
+import Traversal
 from picarx import Picarx 		# Import our Picarx object
 from picamera import PiCamera		# Import our Picamera object
 from picamera.array import PiRGBArray  	# Import the RGB array for picamera
@@ -23,10 +24,21 @@ from tflite_support.task import vision
 #Making these easy to change so that its easier to test
 NUM_OBJECTS = 3 # number of objects the camera will detect
 AVOID_OBJECTS = ["person", "car", "Ultrasonic"] # add things that robot should detect / avoid
+
+TURN_AMOUNT = 15
+DEFAULT_SPEED = 5
+
+#these values help keep track of the picar physical location without use of the GPS
+RL_SPEED_FORWARD = DEFAULT_SPEED * 0.06 # temp value, change later
+RL_SPEED_TURNING = DEFAULT_SPEED * 0.03 # temp
+RL_ANGLE = 0 #temp
+RL_TURNING_RATE = 15 # temp, measure later
+
 GL_LogStr = str()
 GL_start_time = time.perf_counter()
 GL_previous_time = GL_start_time
 GL_curr_time = GL_start_time
+GL_NavGraph = NavigationGraph.NavGraph
 
 # This is a helper function for object_detection. It reads in RPi Chassis object and a tuple.
 # It will then update the tuple based on the ultrasonic sensors output
@@ -35,7 +47,7 @@ def ultrasonic_detect(rpi_chassis, objects):
 
 	# Check if the ultrasonic sensor detects an object
 	distance = rpi_chassis.ultrasonic.read()
-	print("Ultrasonic distance: " + str(distance))
+	addToLog("Ultrasonic distance: " + str(distance))
 
 	# If the distance is less than 30, we have detected an object!
 	if distance < 30:
@@ -173,13 +185,13 @@ def move(rpi_chassis, direction):
 	elif direction == 'forward':
 		# Move the chassis forward
 		rpi_chassis.steer_straight()
-		rpi_chassis.forward(5)
+		rpi_chassis.forward(DEFAULT_SPEED)
 	elif direction == 'left':
 		# Move the chassis left
-		rpi_chassis.set_dir_servo_angle(-15)
+		rpi_chassis.set_dir_servo_angle(-TURN_AMOUNT)
 	elif direction == 'right':
 		# Move the chassis right
-		rpi_chassis.set_dir_servo_angle(15)
+		rpi_chassis.set_dir_servo_angle(TURN_AMOUNT)
 	else:
 		# If any unknown direction is given ignore it
 		return
@@ -189,13 +201,13 @@ def move(rpi_chassis, direction):
 
 	def printTime(type = "Elapsed"):
 		if(type == "Elapsed"):
-			LOGSTR += f"Elasped Time: {GL_curr_time - GL_start_time} "
+			addToLog(f"Elasped Time: {GL_curr_time - GL_start_time} ")
 		elif (type == "update"):
-			LOGSTR += f"Update Time: {GL_curr_time - GL_previous_time} "
+			addToLog(f"Update Time: {GL_curr_time - GL_previous_time} ")
 					
 	def iterateTime():
-		previous_time = curr_time
-		curr_time = time.perf_counter
+		GL_previous_time = GL_curr_time
+		GL_curr_time = time.perf_counter
 
 	def addToLog(line:str):
 		GL_LogStr += line
@@ -203,17 +215,68 @@ def move(rpi_chassis, direction):
 	def PrintLog():
 		print(GL_LogStr)
 		GL_LogStr = ""
-		
 
-# This is the main driver function
-if __name__ == "__main__":
-	# This try helps smoothly stop the program (making sure to stop the car)
-	# Anytime there is an exception/CTRL+C
-	try:
+
+	def updateXY_NOGPS(direction):
+		time = getUpdateTime()
+
+		pass
+
+	def updateAngle_ACC():
+		pass
+
+	def NavInit():
+		path,GL_NavGraph = Traversal.testCase()
+
+		rpi_chassis = Picarx()
+		carData = Traversal.Car()
+		carData.UpdateAngle(0)
+		carData.UpdateLocation(0,0)
+
+		return path, carData, rpi_chassis
+
+	def NavigationTest():
+		path, car, rpi_chassis = NavInit()
+
+
+
+		GL_previous_time = time.perf_counter()
+
+
+		curr_node = 0
+
+		time.sleep(0.5)
+		addToLog("Finished initializing Navigation")
+		printTime()
+
+		addToLog(f"{path}")
+		PrintLog()
+
+		i = 0
+		while i < len(path):
+
+			reachedTargetNode, DirectionToTurn = Traversal.TraverseToNodePICAR(GL_NavGraph,path[i],car)
+
+			if(reachedTargetNode):
+				i += 1
+				addToLog(f"Node {i} reached")
+				move(rpi_chassis,'stop')
+			else:
+				if(DirectionToTurn == 'x'):
+					move(rpi_chassis,'forward')
+				elif(DirectionToTurn == 'L'):
+					move(rpi_chassis,'left')
+				elif(DirectionToTurn == 'R'):
+					move(rpi_chassis,'right')
+					
+
+
+	
+	def ODinit():
 		print("Starting RPi-Chassis")
 
 		# read the graph from file
-		navGraph = NavigationGraph.ReadGraphFromFile("ParkingLotGraph.txt") 
+		
 
 		GL_previous_time = time.perf_counter()
 		# Initialize the PicarX object for our RPi Chassis
@@ -226,7 +289,7 @@ if __name__ == "__main__":
 		# Create our rgb array for camera
 		raw_capture = PiRGBArray(rpi_camera, size=rpi_camera.resolution)
 		# Allow the camera to warm up
-		time.sleep(2)
+		time.sleep(1)
 		addToLog("Finished initializing")
 		printTime()
 		# Our infinate loop for continuous object-detection and navigation
@@ -235,98 +298,115 @@ if __name__ == "__main__":
 		doption = processor.DetectionOptions(max_results=NUM_OBJECTS, score_threshold=0.6)
 		options = vision.ObjectDetectorOptions(base_options=boption, detection_options=doption)
 		detector = vision.ObjectDetector.create_from_options(options)
-		for frame in rpi_camera.capture_continuous(raw_capture, format='bgr', use_video_port=True):
-			addToLog("\n\nBeginning of loop:")
-			# Convert our image into an array
-			img = frame.array
-			# Our list of objects, each object is (True/False, Type, X_location, Y_location, size)
-			objects = object_detection(rpi_chassis, img, detector)
 
-			cur_move = 'forward' # our default movement
-			# For every object given, decide how to move
-			for object in objects:
-				is_object, type, x_loc, y_loc, width, height = object
-				#If nothing is detected or the object is not a Person move forward
-				if not is_object:
-					break
-				elif type == 'Ultrasonic':
-					cur_move = 'stop'
-				elif type not in AVOID_OBJECTS or (width < 100 and height < 200):
-					addToLog("Non-Threatening Object: " + str(type))
-					break
-				else:
-					addToLog("There is an object!")
-					addToLog("Object Type: " + str(type))
-					addToLog("Object Location: " + str(x_loc) + " " + str(y_loc))
-					addToLog("Object Size: " + str(width) + "W " + str(height) + "H")
+		return raw_capture,detector, rpi_chassis
+	
+	def ODtest():
+		# This try helps smoothly stop the program (making sure to stop the car)
+		# Anytime there is an exception/CTRL+C
+		try:
 
-					# If object is on the right, move left
-					if x_loc == "Right":
-						# If we have previously detected an object on the left, stop
-						if cur_move == 'stop' or cur_move == 'right':
-							cur_move = 'stop'
-							#print("Detected object on right and left, stopping.")
-						# Otherwise we just move to the left
-						else:
-							cur_move = 'left'
-							#print("Move left")
-					elif x_loc == "Left":
-						# If we have previously detected an object on the right, stop
-						if cur_move == 'stop' or cur_move == 'left':
-							cur_move = 'stop'
-							#print("Detected object on the left and right, stopping.")
-						# Otherwise we jsut move to the right
-						else:
-							cur_move = 'right'
-							#print("Move right")
-					elif x_loc == "Center":
-						#print("Stopping")
+			NavInit()
+			
+			raw_capture, detector,rpi_chassis = ODinit()
+
+			for frame in rpi_camera.capture_continuous(raw_capture, format='bgr', use_video_port=True):
+				addToLog("\n\nBeginning of loop:")
+				# Convert our image into an array
+				img = frame.array
+				# Our list of objects, each object is (True/False, Type, X_location, Y_location, size)
+				objects = object_detection(rpi_chassis, img, detector)
+
+				cur_move = 'forward' # our default movement
+				# For every object given, decide how to move
+				for object in objects:
+					is_object, type, x_loc, y_loc, width, height = object
+					#If nothing is detected or the object is not a Person move forward
+					if not is_object:
+						break
+					elif type == 'Ultrasonic':
 						cur_move = 'stop'
+					elif  (width < 100 and height < 200) or type not in AVOID_OBJECTS:
+						addToLog("Non-Threatening Object: " + str(type))
 						break
 					else:
-						#print("Object not a threat, move forward")
-						cur_move = 'forward'
+						addToLog("There is an object!")
+						addToLog("Object Type: " + str(type))
+						addToLog("Object Location: " + str(x_loc) + " " + str(y_loc))
+						addToLog("Object Size: " + str(width) + "W " + str(height) + "H")
 
-			# Start moving
-			#move(rpi_chassis, cur_move)
-			'''
-			print("Elasped time: " + str(time.time()-start_time))
-			# Get the coordinates from the gps
-			latitude, longitude = GPS.get_coordinates()
-			# Print the latitude and longitude
-			print("Latitude: ", latitude)
-			print("Longitude: ", longitude)
-	
-			print("Elasped time: " + str(time.time()-start_time))
-			# Get the course and speed
-			course, speed = GPS.get_course_speed()
-			# Print the course and speed
-			print("Course: ", course)
-			print("Speed: ", speed)
-	
-			print("Elasped time: " + str(time.time()-start_time))
-			cur_coord = (latitude, longitude)
-			goal_coord = (0,0)
-	
-			'''
-			printTime()
+						# If object is on the right, move left
+						if x_loc == "Right":
+							# If we have previously detected an object on the left, stop
+							if cur_move == 'stop' or cur_move == 'right':
+								cur_move = 'stop'
+								#print("Detected object on right and left, stopping.")
+							# Otherwise we just move to the left
+							else:
+								cur_move = 'left'
+								#print("Move left")
+						elif x_loc == "Left":
+							# If we have previously detected an object on the right, stop
+							if cur_move == 'stop' or cur_move == 'left':
+								cur_move = 'stop'
+								#print("Detected object on the left and right, stopping.")
+							# Otherwise we jsut move to the right
+							else:
+								cur_move = 'right'
+								#print("Move right")
+						elif x_loc == "Center":
+							#print("Stopping")
+							cur_move = 'stop'
+							break
+						else:
+							#print("Object not a threat, move forward")
+							cur_move = 'forward'
 
-			printLog()
+				# Start moving
+				#move(rpi_chassis, cur_move)
+				'''
+				print("Elasped time: " + str(time.time()-start_time))
+				# Get the coordinates from the gps
+				latitude, longitude = GPS.get_coordinates()
+				# Print the latitude and longitude
+				print("Latitude: ", latitude)
+				print("Longitude: ", longitude)
+		
+				print("Elasped time: " + str(time.time()-start_time))
+				# Get the course and speed
+				course, speed = GPS.get_course_speed()
+				# Print the course and speed
+				print("Course: ", course)
+				print("Speed: ", speed)
+		
+				print("Elasped time: " + str(time.time()-start_time))
+				cur_coord = (latitude, longitude)
+				goal_coord = (0,0)
+		
+				'''
+				printTime()
 
-			iterateTime()
+				printLog()
 
-			# Slow down output
-			#time.sleep(1)
-			# Show the image
-			#cv2.imshow('RPi Camera', img)
-			# Release image cache
-			raw_capture.truncate(0)
+				iterateTime()
 
-			#k = cv2.waitKey(1) & 0xFF
-			#if k == 27:
-			#	break
+				# Slow down output
+				#time.sleep(1)
+				# Show the image
+				#cv2.imshow('RPi Camera', img)
+				# Release image cache
+				raw_capture.truncate(0)
 
-	except:
-		rpi_chassis = Picarx()
-		rpi_chassis.stop()
-		print("Exiting...")
+				#k = cv2.waitKey(1) & 0xFF
+				#if k == 27:
+				#	break
+
+		except:
+			rpi_chassis = Picarx()
+			rpi_chassis.stop()
+			print("Exiting...")
+
+# This is the main driver function
+if __name__ == "__main__":
+	NavigationTest()
+	#ODtest()

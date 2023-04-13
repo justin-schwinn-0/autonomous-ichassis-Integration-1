@@ -17,19 +17,16 @@ def distanceFromAtoB(a,b)-> float:
     bx,by = b.getLocation()
     return math.sqrt((bx-ax)**2 + (by-ay)**2)
 
-#turns a 0 to 360 angle into a -180 to 180 angle
-def fixAngle(angleDiff): 
-    remainder = angleDiff % 180
-    newAngle = angleDiff
-    if(angleDiff > 180 or angleDiff < -180):
-        newAngle = remainder
-        
-    return newAngle
+#turns a -180-180 into 0-360 angle
+def fixAngle(angle): 
+    if angle < 0:
+        angle += 360
+    return angle % 360
 
 class Car:
     
-    AngleTolerance = 5.0
-    NodeDistanceTolerance = 0.2
+    AngleTolerance = 10.0
+    NodeDistanceTolerance = 0.35
     MaxTurn = 30                    # for testing purposes, not used on piccar
     TurningMoveSpeed = 0.2
     NormalSpeed = .4
@@ -78,46 +75,38 @@ class Car:
     def getLocation(self):
         return self.X,self.Y
 
-    def UpdateLocation(self):
-        latitude,longitude = GPS.get_coordinates()
+    def UpdateLocation(self,x,y):
+        self.x = x
+        self.y = y
 
-    def UpdateCourse(self):
-        course, unused_speed = GPS.get_course_speed()
-        self.angle = fixAngle(course)
+    def UpdateAngle(self, newAngle):
+        self.angle = fixAngle(newAngle)
 
-    def PiCARturn(self, direction):
-        if(direction == 'x'):
-            return None
-        
-        if(direction == 'L'):
-         piCar.steer_left()
-        else:
-         piCar.steer_right()
-
-    #always move forward, forward() should slow the car down while turning
-    def PiCARMove():
-        piCar.forward(Car.NormalSpeed)
 
 #keep
 def testCase():
 
-    a = Node('x',32.99328671685252, -96.75160268387103,"A")
-    b = Node('x',32.99339582533694, -96.75160536608,"B")
-    c = Node('x',32.99340482396881, -96.75150746545252,"C")
-    d = Node('x',32.993400324653, -96.75143638691478,"D")
+    a = Node('x',-2,0,"A")
+    b = Node('x',1,0,"B")
+    c = Node('x',3,2,"C")
+    d = Node('x',5,0,"D")
+    e = Node('x',6,0.1,"D")
+    f = Node('x',7,0,"D")
 
     # might need to trim these numbers, 
     # 6 or 7 digits of percision is should be good, 
     # if we even have that much percision in the GPS
 
     graph = NavGraph()
-    graph.setNodes([a,b,c,d])
+    graph.setNodes([a,b,c,d,e,f])
 
     graph.AddPaths(0,[1])
     graph.AddPaths(1,[2])
     graph.AddPaths(2,[3])
+    graph.AddPaths(3,[4])
+    graph.AddPaths(4,[5])
 
-    path = graph.PathFromAtoB(0,3)
+    path = graph.PathFromAtoB(0,5)
 
     return path,graph
 
@@ -164,7 +153,7 @@ def TraverseToNode(graph:NavGraph,targetIndex:int,c:Car)->bool:
     targetAngle = AngleFromAToB(c,graph.Nodes[targetIndex])
     distanceToTarget = distanceFromAtoB(c,graph.Nodes[targetIndex])
     if distanceToTarget < Car.NodeDistanceTolerance: # reached node, return true
-        return True
+        return True,None
     else: 
         #turn the car if necessary
         # then move forward at a low speed if turning, higher if no turn
@@ -172,42 +161,33 @@ def TraverseToNode(graph:NavGraph,targetIndex:int,c:Car)->bool:
         c.turn(direction, angleDelta)
         c.move(direction)
 
-        print(f"target: {graph.Nodes[targetIndex].getLocation()} Car Location: {c.getLocation()} Car angle: {c.angle} angle Delta: {angleDelta}")
+        targetlocX, targetlocY = graph.Nodes[targetIndex].getLocation()
+        carLocX, carLocY = c.getLocation()
+        print(f"target: ({targetlocX:3.4f},{targetlocY:3.4f}) Car Location: ({carLocX:3.4f},{carLocY:3.4f}) Car angle: {c.angle:3.4f} angle Delta: {angleDelta:3.4f}")
 
-    return False
-        
-# return true if reached node, false otherwise
-def TraverseToNodeGPS(graph:NavGraph,targetIndex:int,c:Car)->bool: 
+    return False,
+
+
+def TraverseToNodePICAR(graph:NavGraph,targetIndex:int,c:Car)->bool: 
+    # return true if reached node, false otherwise
+    
     #if object detection is good, go on
     #if path finding is good, go on.
-
-    c.UpdateCourse()
-    c.UpdateLocation()
 
     targetAngle = AngleFromAToB(c,graph.Nodes[targetIndex])
     distanceToTarget = distanceFromAtoB(c,graph.Nodes[targetIndex])
     if distanceToTarget < Car.NodeDistanceTolerance: # reached node, return true
-        return True
+        return True,None
     else: 
-        # turn the car if necessary 
+        #turn the car if necessary
         # then move forward at a low speed if turning, higher if no turn
-        # it looks like "move slow if moving" is built into picar.forward()
-        # angleDelta is the difference between the direction the car is facing and the direction the car should be facing to hit the next node perfectly
         direction, angleDelta = c.getturnData(targetAngle)
-        
-        
-        c.PiCARturn(direction)
-        c.PiCARMove()
 
-        debugstring = ""
-        debugstring += f" target: {graph.Nodes[targetIndex].getLocation()}" 
-        debugstring += f" Car Location: {c.getLocation()}"
-        debugstring += f" Car angle: {c.angle}"
-        debugstring += f" angle Delta: {angleDelta}"
+        targetlocX, targetlocY = graph.Nodes[targetIndex].getLocation()
+        carLocX, carLocY = c.getLocation()
+        print(f"target: ({targetlocX:3.4f},{targetlocY:3.4f}) Car Location: ({carLocX:3.4f},{carLocY:3.4f}) Car angle: {c.angle:3.4f} angle Delta: {angleDelta:3.4f}")
 
-        print(debugstring)
-       
-    return False
+    return False,direction
 
 
 # python3 traversal.py starts here
@@ -219,9 +199,8 @@ if __name__ == "__main__":
     i = 0
     while i < len(p):
         # p[] = path of nodes in order to reach the destination
-        reachedTargetNode = TraverseToNodeGPS(g,p[i],c)
+        reachedTargetNode = TraverseToNode(g,p[i],c)
         if(reachedTargetNode):
             print("node",i, "reached")
             i+=1
     print("destination reached")
-    piCar.stop()
