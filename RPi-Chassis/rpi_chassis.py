@@ -211,7 +211,7 @@ def move(rpi_chassis, direction):
 	def addToLog(line:str):
 		GL_LogStr += line
 	
-	def PrintLog():
+	def printLog():
 		print(GL_LogStr)
 		GL_LogStr = ""
 		pass
@@ -235,7 +235,7 @@ def move(rpi_chassis, direction):
 
 		return path, carData, rpi_chassis
 
-	def NavigationTest1():
+	def NavTest1():
 		
 		path, car, rpi_chassis = NavInit()
 
@@ -251,7 +251,7 @@ def move(rpi_chassis, direction):
 		printTime()
 
 		addToLog(f"{path}")
-		PrintLog()
+		printLog()
 
 		i = 0
 		while i < len(path):
@@ -299,7 +299,7 @@ def move(rpi_chassis, direction):
 		options = vision.ObjectDetectorOptions(base_options=boption, detection_options=doption)
 		detector = vision.ObjectDetector.create_from_options(options)
 
-		return raw_capture,detector, rpi_chassis
+		return raw_capture,detector, rpi_chassis, rpi_camera
 	
 	def ODtest():
 		# This try helps smoothly stop the program (making sure to stop the car)
@@ -308,7 +308,7 @@ def move(rpi_chassis, direction):
 
 			NavInit()
 			
-			raw_capture, detector,rpi_chassis = ODinit()
+			raw_capture, detector,rpi_chassis, rpi_camera = ODinit()
 
 			for frame in rpi_camera.capture_continuous(raw_capture, format='bgr', use_video_port=True):
 				addToLog("\n\nBeginning of loop:")
@@ -412,5 +412,6 @@ if __name__ == "__main__":
 	
 	print("test")
 
-	NavigationTest1()
+	Nav
+
 	#ODtest()
