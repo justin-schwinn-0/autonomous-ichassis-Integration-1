@@ -214,6 +214,7 @@ def move(rpi_chassis, direction):
 	def PrintLog():
 		print(GL_LogStr)
 		GL_LogStr = ""
+		pass
 
 
 	def updateXY_NOGPS(direction):
@@ -409,5 +410,7 @@ def move(rpi_chassis, direction):
 if __name__ == "__main__":
 	#new code here test
 	
+	print("test")
+
 	NavigationTest1()
 	#ODtest()
