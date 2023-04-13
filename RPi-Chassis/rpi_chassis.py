@@ -223,18 +223,18 @@ def updateAngle_ACC():
 	pass
 
 def NavInit():
-	path,GL_NavGraph = Traversal.testCase()
+	path, graph = Traversal.testCase()
 
 	rpi_chassis = Picarx()
 	carData = Traversal.Car()
 	carData.UpdateAngle(0)
 	carData.UpdateLocation(0,0)
 
-	return path, carData, rpi_chassis
+	return path, graph ,carData, rpi_chassis
 
 def NavigationTest():
 	
-	path, car, rpi_chassis = NavInit()
+	path, graph ,car, rpi_chassis = NavInit()
 
 
 
@@ -253,7 +253,7 @@ def NavigationTest():
 	i = 0
 	while i < len(path):
 
-		reachedTargetNode, DirectionToTurn = Traversal.TraverseToNodePICAR(GL_NavGraph,path[i],car)
+		reachedTargetNode, DirectionToTurn = Traversal.TraverseToNodePICAR(graph,path[i],car)
 
 		if(reachedTargetNode):
 			i += 1
