@@ -461,6 +461,8 @@ if __name__ == "__main__":
 
 	print(new_coordinate(0,0,90,4,4,30))
 	print(new_coordinate(0,0,90,4,4,-30))
+	print(new_coordinate(0,0,0,4,4,30))
+	print(new_coordinate(0,0,0,4,4,-30))
 
 	#NavigationTest()
 
