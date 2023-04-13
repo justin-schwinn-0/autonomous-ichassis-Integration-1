@@ -37,7 +37,7 @@ GL_LogStr = str()
 GL_start_time = time.perf_counter()
 GL_previous_time = GL_start_time
 GL_curr_time = GL_start_time
-GL_NavGraph = NavigationGraph.NavGraph
+GL_NavGraph = NavigationGraph.NavGraph()
 
 # This is a helper function for object_detection. It reads in RPi Chassis object and a tuple.
 # It will then update the tuple based on the ultrasonic sensors output
@@ -195,113 +195,110 @@ def move(rpi_chassis, direction):
 		# If any unknown direction is given ignore it
 		return
 
-	def getUpdateTime():
-		return GL_curr_time - GL_previous_time
+def getUpdateTime():
+	return GL_curr_time - GL_previous_time
 
-	def printTime(type = "Elapsed"):
-		if(type == "Elapsed"):
-			addToLog(f"Elasped Time: {GL_curr_time - GL_start_time} ")
-		elif (type == "update"):
-			addToLog(f"Update Time: {GL_curr_time - GL_previous_time} ")
-					
-	def iterateTime():
-		GL_previous_time = GL_curr_time
-		GL_curr_time = time.perf_counter
+def printTime(type = "Elapsed"):
+	if(type == "Elapsed"):
+		addToLog(f"Elasped Time: {GL_curr_time - GL_start_time} ")
+	elif (type == "update"):
+		addToLog(f"Update Time: {GL_curr_time - GL_previous_time} ")
+				
+def iterateTime():
+	GL_previous_time = GL_curr_time
+	GL_curr_time = time.perf_counter
 
-	def addToLog(line:str):
-		GL_LogStr += line
+def addToLog(line:str):
+	GL_LogStr += line
+
+def printLog():
+	print(GL_LogStr)
+	GL_LogStr = ""
+	pass
+
+def updateXY_NOGPS(direction):
+	time = getUpdateTime()
+
+	pass
+
+def updateAngle_ACC():
+	pass
+
+def NavInit():
+	path,GL_NavGraph = Traversal.testCase()
+
+	rpi_chassis = Picarx()
+	carData = Traversal.Car()
+	carData.UpdateAngle(0)
+	carData.UpdateLocation(0,0)
+
+	return path, carData, rpi_chassis
+
+def NavTest1():
 	
-	def printLog():
-		print(GL_LogStr)
-		GL_LogStr = ""
-		pass
-
-
-	def updateXY_NOGPS(direction):
-		time = getUpdateTime()
-
-		pass
-
-	def updateAngle_ACC():
-		pass
-
-	def NavInit():
-		path,GL_NavGraph = Traversal.testCase()
-
-		rpi_chassis = Picarx()
-		carData = Traversal.Car()
-		carData.UpdateAngle(0)
-		carData.UpdateLocation(0,0)
-
-		return path, carData, rpi_chassis
-
-	def NavTest1():
-		
-		path, car, rpi_chassis = NavInit()
+	path, car, rpi_chassis = NavInit()
 
 
 
-		GL_previous_time = time.perf_counter()
+	GL_previous_time = time.perf_counter()
 
 
-		curr_node = 0
+	curr_node = 0
 
-		time.sleep(0.5)
-		addToLog("Finished initializing Navigation")
-		printTime()
+	time.sleep(0.5)
+	addToLog("Finished initializing Navigation")
+	printTime()
 
-		addToLog(f"{path}")
-		printLog()
+	addToLog(f"{path}")
+	printLog()
 
-		i = 0
-		while i < len(path):
+	i = 0
+	while i < len(path):
 
-			reachedTargetNode, DirectionToTurn = Traversal.TraverseToNodePICAR(GL_NavGraph,path[i],car)
+		reachedTargetNode, DirectionToTurn = Traversal.TraverseToNodePICAR(GL_NavGraph,path[i],car)
 
-			if(reachedTargetNode):
-				i += 1
-				addToLog(f"Node {i} reached")
-				move(rpi_chassis,'stop')
-			else:
-				if(DirectionToTurn == 'x'):
-					move(rpi_chassis,'forward')
-				elif(DirectionToTurn == 'L'):
-					move(rpi_chassis,'left')
-				elif(DirectionToTurn == 'R'):
-					move(rpi_chassis,'right')
-					
+		if(reachedTargetNode):
+			i += 1
+			addToLog(f"Node {i} reached")
+			move(rpi_chassis,'stop')
+		else:
+			if(DirectionToTurn == 'x'):
+				move(rpi_chassis,'forward')
+			elif(DirectionToTurn == 'L'):
+				move(rpi_chassis,'left')
+			elif(DirectionToTurn == 'R'):
+				move(rpi_chassis,'right')
+				
+def ODinit():
+	print("Starting RPi-Chassis")
 
+	# read the graph from file
 	
-	def ODinit():
-		print("Starting RPi-Chassis")
 
-		# read the graph from file
-		
+	GL_previous_time = time.perf_counter()
+	# Initialize the PicarX object for our RPi Chassis
+	rpi_chassis = Picarx()
+	# Initilize the Picamera object
+	rpi_camera = PiCamera()
+	# Set the camera's resolution and framerate
+	rpi_camera.resolution = (640,480) 	# Our camera can support other but at slower FPS
+	rpi_camera.framerate = 90			# Our camera can support 90 fps
+	# Create our rgb array for camera
+	raw_capture = PiRGBArray(rpi_camera, size=rpi_camera.resolution)
+	# Allow the camera to warm up
+	time.sleep(1)
+	addToLog("Finished initializing")
+	printTime()
+	# Our infinate loop for continuous object-detection and navigation
+	# Get continuous input from our camera, it is an infinate loop!
+	boption = core.BaseOptions(file_name='tf_lite_models/efficientdet_lite0.tflite', use_coral=True, num_threads=2)
+	doption = processor.DetectionOptions(max_results=NUM_OBJECTS, score_threshold=0.6)
+	options = vision.ObjectDetectorOptions(base_options=boption, detection_options=doption)
+	detector = vision.ObjectDetector.create_from_options(options)
 
-		GL_previous_time = time.perf_counter()
-		# Initialize the PicarX object for our RPi Chassis
-		rpi_chassis = Picarx()
-		# Initilize the Picamera object
-		rpi_camera = PiCamera()
-		# Set the camera's resolution and framerate
-		rpi_camera.resolution = (640,480) 	# Our camera can support other but at slower FPS
-		rpi_camera.framerate = 90			# Our camera can support 90 fps
-		# Create our rgb array for camera
-		raw_capture = PiRGBArray(rpi_camera, size=rpi_camera.resolution)
-		# Allow the camera to warm up
-		time.sleep(1)
-		addToLog("Finished initializing")
-		printTime()
-		# Our infinate loop for continuous object-detection and navigation
-		# Get continuous input from our camera, it is an infinate loop!
-		boption = core.BaseOptions(file_name='tf_lite_models/efficientdet_lite0.tflite', use_coral=True, num_threads=2)
-		doption = processor.DetectionOptions(max_results=NUM_OBJECTS, score_threshold=0.6)
-		options = vision.ObjectDetectorOptions(base_options=boption, detection_options=doption)
-		detector = vision.ObjectDetector.create_from_options(options)
+	return raw_capture,detector, rpi_chassis, rpi_camera
 
-		return raw_capture,detector, rpi_chassis, rpi_camera
-	
-	def ODtest():
+def ODtest():
 		# This try helps smoothly stop the program (making sure to stop the car)
 		# Anytime there is an exception/CTRL+C
 		try:
@@ -412,6 +409,6 @@ if __name__ == "__main__":
 	
 	print("test")
 
-	Nav
+	Navtest1()
 
 	#ODtest()
