@@ -234,7 +234,7 @@ def NavInit():
 
 	return path, carData, rpi_chassis
 
-def NavTest1():
+def NavigationTest():
 	
 	path, car, rpi_chassis = NavInit()
 
@@ -409,6 +409,6 @@ if __name__ == "__main__":
 	
 	print("test")
 
-	Navtest1()
+	NavigationTest()
 
 	#ODtest()
