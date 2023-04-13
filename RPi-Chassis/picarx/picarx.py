@@ -186,11 +186,13 @@ class Picarx(object):
         self.stop()
         self.set_dir_servo_angle(0)
         
-    def steer_left(self):
-        self.set_dir_servo_angle(-30)
+    def steer_left(self, amount = -30):
+
+        self.set_dir_servo_angle(amount)
+
     
-    def steer_right(self):
-        self.set_dir_servo_angle(30)
+    def steer_right(self,amount = 30):
+        self.set_dir_servo_angle(amount)
         
     def steer_straight(self):
         self.set_dir_servo_angle(0)

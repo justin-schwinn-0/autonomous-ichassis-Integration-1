@@ -43,10 +43,10 @@ if __name__ == "__main__":
                 rpichassis.backward(50)
             # If a, set the steering servo to steer left
             elif 'a' == key:
-                rpichassis.steer_left()
+                rpichassis.steer_left(-15)
             # If d, set the steering servo to steer right
             elif 'd' == key:
-                rpichassis.steer_right()
+                rpichassis.steer_right(15)
             # If q, set the steering servo to steer straight
             elif 'q' == key:
                 rpichassis.steer_straight()
