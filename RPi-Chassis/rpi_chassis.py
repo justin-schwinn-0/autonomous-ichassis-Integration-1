@@ -33,7 +33,7 @@ RL_SPEED_TURNING = DEFAULT_SPEED * 0.03 # temp
 RL_ANGLE = 0 #temp
 RL_TURNING_RATE = 15 # temp, measure later
 
-GL_LogStr = str()
+GL_LogStr = ""
 GL_start_time = time.perf_counter()
 GL_previous_time = GL_start_time
 GL_curr_time = GL_start_time
