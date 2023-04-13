@@ -4,7 +4,6 @@ The live navigation and object detection will reside within this program.
 '''
 
 import os,sys
-sys.path.append("../Navigation")
 
 # Our required libaries
 import time 				# Used to sleep
@@ -235,7 +234,7 @@ def move(rpi_chassis, direction):
 
 		return path, carData, rpi_chassis
 
-	def NavigationTest():
+	def NavigationTest1():
 		
 		path, car, rpi_chassis = NavInit()
 
@@ -270,7 +269,6 @@ def move(rpi_chassis, direction):
 				elif(DirectionToTurn == 'R'):
 					move(rpi_chassis,'right')
 					
-
 
 	
 	def ODinit():
@@ -411,5 +409,5 @@ def move(rpi_chassis, direction):
 if __name__ == "__main__":
 	#new code here test
 	
-	NavigationTest()
+	NavigationTest1()
 	#ODtest()
