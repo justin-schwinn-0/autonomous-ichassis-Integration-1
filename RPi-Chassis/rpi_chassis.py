@@ -231,7 +231,7 @@ given it's
 	velocity in m/s
 """
 
-def new_coordinate(x, y, angle_degrees, t, r, angular_velocity_degrees):
+def turning_displacement_calc(x, y, angle_degrees, t, r, angular_velocity_degrees):
     # Convert angular velocity from degrees to radians per second
 	angle = math.radians(angle_degrees)
 	angular_velocity = math.radians(angular_velocity_degrees)
@@ -244,33 +244,39 @@ def new_coordinate(x, y, angle_degrees, t, r, angular_velocity_degrees):
 	new_y = y + r * (math.cos(angle) - math.cos(new_angle))
 
     # Return a tuple containing the new X and Y coordinates
-	return (new_x, new_y)
+	return (new_x, new_y,new_angle)
 
-def updateXY_NOGPS(car:Traversal.Car,direction):
+def updateCAR_CALCXY(car:Traversal.Car,direction):
 	updateTime = getUpdateTime()
 	print(f"Dt: {updateTime}")
 
 
 
-	movX = 0
-	movY = 0
+	newX = 0
+	newY = 0
+	newAngle = car.angle
 
 	displacement = RL_SPEED_FORWARD * updateTime
 
 	if(direction == 'x'):
-		movX = displacement * math.cos(car.angle)
-		movX = displacement * math.sin(car.angle)
+		newX = displacement * math.cos(car.angle) + car.X
+		newX = displacement * math.sin(car.angle) + car.Y
 	elif(direction == 'L'):
+		newX,newY,newAngle = turning_displacement_calc(car.X,car.Y,car.angle,updateTime,RL_TURNING_CIRCLE_RADIUS,RL_TURNING_RATE)
+	elif(direction == 'L'):
+		newX,newY,newAngle = turning_displacement_calc(car.X,car.Y,car.angle,updateTime,RL_TURNING_CIRCLE_RADIUS,-RL_TURNING_RATE)
 
-		pass
-	elif(direction == 'R'):
-		pass
+	car.X = newX
+	car.Y = newY
+	car.angle = newAngle
+
+
 
 def updateAngle_NOACC():
 	pass
 
 def NavInit():
-	path, graph = Traversal.testCase()
+	path, graph = Traversal.MoveTestCase(2)
 
 	rpi_chassis = Picarx()
 	carData = Traversal.Car()
@@ -316,7 +322,7 @@ def NavigationTest():
 			elif(DirectionToTurn == 'R'):
 				move(rpi_chassis,'right')
 			
-			updateXY_NOGPS(DirectionToTurn)
+			updateCAR_CALCXY(car,DirectionToTurn)
 
 				
 def ODinit():
@@ -459,10 +465,10 @@ if __name__ == "__main__":
 	
 	print("test")
 
-	print(new_coordinate(0,0,90,4,4,30))
-	print(new_coordinate(0,0,90,4,4,-30))
-	print(new_coordinate(0,0,0,4,4,30))
-	print(new_coordinate(0,0,0,4,4,-30))
+	print(turning_displacement_calc(0,0,90,4,4,30))
+	print(turning_displacement_calc(0,0,90,4,4,-30))
+	print(turning_displacement_calc(0,0,0,4,4,30))
+	print(turning_displacement_calc(0,0,0,4,4,-30))
 
 	#NavigationTest()
 

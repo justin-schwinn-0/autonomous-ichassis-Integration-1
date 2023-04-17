@@ -82,10 +82,7 @@ class Car:
     def UpdateAngle(self, newAngle):
         self.angle = fixAngle(newAngle)
 
-
-#keep
-def testCase():
-
+def Test1Nodes():
     a = Node('x',-2,0,"A")
     b = Node('x',1,0,"B")
     c = Node('x',3,2,"C")
@@ -93,12 +90,27 @@ def testCase():
     e = Node('x',6,0.1,"D")
     f = Node('x',7,0,"D")
 
+    return [a,b,c,d,e,f]
+
+def Test2Nodes():
+    a = Node('x',0,0,"A")
+    b = Node('x',0.5,-0.5,"B")
+    c = Node('x',0,-1.5,"C")
+    d = Node('x',0,0,"D")
+    e = Node('x',-1,1,"D")
+    f = Node('x',-2,0,"D")
+
+    return [a,b,c,d,e,f]
+
+#keep
+def TestCase1():
+
     # might need to trim these numbers, 
     # 6 or 7 digits of percision is should be good, 
     # if we even have that much percision in the GPS
 
     graph = NavGraph()
-    graph.setNodes([a,b,c,d,e,f])
+    graph.setNodes(Test1Nodes())
 
     graph.AddPaths(0,[1])
     graph.AddPaths(1,[2])
@@ -109,6 +121,21 @@ def testCase():
     path = graph.PathFromAtoB(0,5)
 
     return path,graph
+
+def MoveTestCase(index:int = 3):
+    graph = NavGraph()
+    graph.setNodes(Test2Nodes())
+
+    graph.AddPaths(0,[1])
+    graph.AddPaths(1,[2])
+    graph.AddPaths(2,[3])
+    graph.AddPaths(3,[4])
+    graph.AddPaths(4,[5])
+
+    path = graph.PathFromAtoB(0,index)
+
+    return path,graph
+
 
 #just testing angles, ignore
 def TestAngles():
@@ -192,7 +219,7 @@ def TraverseToNodePICAR(graph:NavGraph,targetIndex:int,c:Car)->bool:
 
 # python3 traversal.py starts here
 if __name__ == "__main__":
-    p,g = testCase()
+    p,g = TestCase1()
     c = Car()
     
 
