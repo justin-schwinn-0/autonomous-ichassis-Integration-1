@@ -327,7 +327,7 @@ def NavigationTest():
 				updateCAR_CALCXY(car,DirectionToTurn)
 
 				print(f"({car.X:3.4f},{car.Y:3.4f})")
-	except:
+	finally:
 		rpi_chassis = Picarx()
 		rpi_chassis.stop()
 		print("Exiting...")
