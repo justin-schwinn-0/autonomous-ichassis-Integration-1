@@ -75,7 +75,7 @@ class Car:
     def getLocation(self):
         return self.X,self.Y
 
-    def setLocation(self,x,y):
+    def setLocation(self,x:float,y:float):
         self.x = x
         self.y = y
 
