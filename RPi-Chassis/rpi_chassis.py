@@ -325,7 +325,7 @@ def NavigationTest():
 
 				print(f"{nx:3.7f} {ny:3.7f} {na}")
 
-				print(f"{car.X:3.7f} {car.Y:3.7f}")
+				print(car)
 				car.setLocation(nx,ny)
 				car.setAngle(na)
 
