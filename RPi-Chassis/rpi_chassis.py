@@ -41,14 +41,14 @@ car = Traversal.Car()
 
 class Globals:
 	Logstr = str('')
-	start_time = time.perf_counter()
+	start_time = time.time()
 	prev_time = 0.0
 	curr_time = 0.0
 
 
 	def iterateTime():
 		Globals.prev_time = Globals.curr_time
-		Globals.curr_time = time.perf_counter()
+		Globals.curr_time = time.time()
 
 	def GetUpdateTime():
 		return Globals.curr_time - Globals.prev_time
