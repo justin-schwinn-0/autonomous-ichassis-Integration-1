@@ -75,11 +75,11 @@ class Car:
     def getLocation(self):
         return self.X,self.Y
 
-    def UpdateLocation(self,x,y):
+    def setLocation(self,x,y):
         self.x = x
         self.y = y
 
-    def UpdateAngle(self, newAngle):
+    def setAngle(self, newAngle):
         self.angle = fixAngle(newAngle)
 
 def Test1Nodes():
