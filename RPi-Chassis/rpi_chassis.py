@@ -311,7 +311,7 @@ def NavigationTest():
 
 
 
-			if(reachedTargetNode):
+			if(not not reachedTargetNode):
 				i += 1
 				print(f"Node {i} reached")
 				move(rpi_chassis,'stop')
