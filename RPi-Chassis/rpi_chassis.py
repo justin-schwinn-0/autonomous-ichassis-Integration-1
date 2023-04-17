@@ -265,7 +265,7 @@ def updateCAR_CALCXY(direction):
 	if(direction == 'x'):
 		#print("gets into x displacment")
 		newX = (displacement * math.cos(car.angle) + car.X)
-		newX = displacement * math.sin(car.angle) + car.Y
+		newY = displacement * math.sin(car.angle) + car.Y
 		print(f"{direction}     {displacement * math.cos(car.angle) + car.X} = {newX}")
 	elif(direction == 'L'):
 		newX,newY,newAngle = turning_displacement_calc(car.X,car.Y,car.angle,updateTime,RL_TURNING_CIRCLE_RADIUS,RL_TURNING_RATE)
