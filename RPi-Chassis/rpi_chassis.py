@@ -37,12 +37,12 @@ RL_TURNING_RATE = 52.9411 # degrees /s
 RL_TURNING_CIRCLE_RADIUS = 0.915 / 2 #m
 RL_TURNING_SPEED = 2.87456 / 6.80 # m/s
 
+class Globals:
+	Logstr = str('')
+	start_time = time.perf_counter()
+	prev_time = start_time
+	curr_time = start_time
 
-GL_LogStr = str('')
-GL_start_time = time.perf_counter()
-GL_previous_time = GL_start_time
-GL_curr_time = GL_start_time
-GL_NavGraph = NavigationGraph.NavGraph()
 
 # This is a helper function for object_detection. It reads in RPi Chassis object and a tuple.
 # It will then update the tuple based on the ultrasonic sensors output
@@ -202,13 +202,13 @@ def move(rpi_chassis, direction):
 		return
 
 def getUpdateTime():
-	return GL_curr_time - GL_previous_time
+	return Globals.curr_time - Globals.prev_time
 
 def printTime(type = "Elapsed"):
 	if(type == "Elapsed"):
-		print(f"Elasped Time: {GL_curr_time - GL_start_time} ")
+		print(f"Elasped Time: {Globals.curr_time - Globals.start_time} ")
 	elif (type == "update"):
-		print(f"Update Time: {GL_curr_time - GL_previous_time} ")
+		print(f"Update Time: {Globals.curr_time - Globals.prev_time} ")
 				
 def iterateTime():
 	GL_previous_time = GL_curr_time
@@ -467,9 +467,15 @@ def ODtest():
 			rpi_chassis.stop()
 			print("Exiting...")
 
+
+def initTime():
+	Globals.curr_time
+	Globals.start_time
+	Globals.prev_time
 # This is the main driver function
 if __name__ == "__main__":
 	#new code here test
+
 
 	NavigationTest()
 
