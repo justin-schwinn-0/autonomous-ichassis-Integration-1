@@ -250,9 +250,6 @@ def turning_displacement_calc(x, y, angle_degrees, t, r, angular_velocity_degree
 	return (new_x, new_y,new_angle)
 
 def updateCAR_CALCXY(direction):
-
-	print(f"ct: {Globals.curr_time} t: {Globals.prev_time}")
-
 	updateTime = Globals.GetUpdateTime()
 
 	global car
@@ -264,7 +261,7 @@ def updateCAR_CALCXY(direction):
 	displacement = 0
 	displacement = RL_SPEED_FORWARD * updateTime
 
-	#print(f"{RL_SPEED_FORWARD} * {updateTime} = {displacement}")
+	print(f"{RL_SPEED_FORWARD} * {updateTime} = {displacement}")
 
 	if(direction == 'x'):
 		newX = displacement * math.cos(car.angle) + car.X
