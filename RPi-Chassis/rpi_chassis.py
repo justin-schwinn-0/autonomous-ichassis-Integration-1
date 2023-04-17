@@ -251,7 +251,7 @@ def turning_displacement_calc(x, y, angle_degrees, t, r, angular_velocity_degree
 
 def updateCAR_CALCXY(direction):
 
-	#print(f"ct: {Globals.curr_time} t: {Globals.prev_time}")
+	print(f"ct: {Globals.curr_time} t: {Globals.prev_time}")
 
 	updateTime = Globals.GetUpdateTime()
 
