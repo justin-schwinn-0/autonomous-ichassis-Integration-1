@@ -211,8 +211,8 @@ def printTime(type = "Elapsed"):
 		print(f"Update Time: {Globals.curr_time - Globals.prev_time} ")
 				
 def iterateTime():
-	GL_previous_time = GL_curr_time
-	GL_curr_time = time.perf_counter
+	Globals.prev_time = Globals.curr_time
+	Globals.curr_time = time.perf_counter
 
 
 def printLog():
