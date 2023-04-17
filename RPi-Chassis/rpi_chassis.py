@@ -297,7 +297,7 @@ def NavigationTest():
 		time.sleep(0.5)
 		print("Finished initializing Navigation")
 		
-		printTime()
+		Globals.printTime()
 
 		print(f"{path}")
 
