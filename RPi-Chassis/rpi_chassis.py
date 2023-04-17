@@ -43,6 +43,8 @@ class Globals:
 	prev_time = 0.0
 	curr_time = 0.0
 
+	car = Traversal.Car()
+
 	def iterateTime():
 		Globals.prev_time = Globals.curr_time
 		Globals.curr_time = time.perf_counter()
@@ -245,7 +247,7 @@ def turning_displacement_calc(x, y, angle_degrees, t, r, angular_velocity_degree
     # Return a tuple containing the new X and Y coordinates
 	return (new_x, new_y,new_angle)
 
-def updateCAR_CALCXY(car:Traversal.Car,direction):
+def updateCAR_CALCXY(direction, car:Traversal.Car = Globals.car):
 	updateTime = Globals.GetUpdateTime()
 
 	newX = 0
@@ -285,11 +287,6 @@ def NavigationTest():
 	
 	try:
 		path, graph ,car, rpi_chassis = NavInit()
-
-
-
-		GL_previous_time = time.perf_counter()
-
 
 		curr_node = 0
 
@@ -348,7 +345,7 @@ def ODinit():
 	# Allow the camera to warm up
 	time.sleep(1)
 	print("Finished initializing")
-	printTime()
+	Globals.printTime()
 	# Our infinate loop for continuous object-detection and navigation
 	# Get continuous input from our camera, it is an infinate loop!
 	boption = core.BaseOptions(file_name='tf_lite_models/efficientdet_lite0.tflite', use_coral=True, num_threads=2)
