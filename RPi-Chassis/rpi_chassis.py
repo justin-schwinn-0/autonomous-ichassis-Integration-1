@@ -47,6 +47,7 @@ class Globals:
 
 
 	def iterateTime():
+
 		Globals.prev_time = Globals.curr_time
 		Globals.curr_time = time.time()
 
@@ -250,7 +251,7 @@ def turning_displacement_calc(x, y, angle_degrees, t, r, angular_velocity_degree
 
 def updateCAR_CALCXY(direction):
 
-	print(f"ct: {Globals.curr_time} t: {Globals.prev_time}")
+	#print(f"ct: {Globals.curr_time} t: {Globals.prev_time}")
 
 	updateTime = Globals.GetUpdateTime()
 
@@ -263,7 +264,7 @@ def updateCAR_CALCXY(direction):
 	displacement = 0
 	displacement = RL_SPEED_FORWARD * updateTime
 
-	print(f"{RL_SPEED_FORWARD} * {updateTime} = {displacement}")
+	#print(f"{RL_SPEED_FORWARD} * {updateTime} = {displacement}")
 
 	if(direction == 'x'):
 		newX = displacement * math.cos(car.angle) + car.X
@@ -337,6 +338,8 @@ def NavigationTest():
 
 				car.UpdateLocation(nx,ny)
 				car.UpdateAngle(na)
+
+				Globals.iterateTime()
 				#print(f"({car.X:3.4f},{car.Y:3.4f})")
 	finally:
 		rpi_chassis = Picarx()
@@ -349,8 +352,6 @@ def ODinit():
 
 	# read the graph from file
 	
-
-	GL_previous_time = time.perf_counter()
 	# Initialize the PicarX object for our RPi Chassis
 	rpi_chassis = Picarx()
 	# Initilize the Picamera object
