@@ -323,13 +323,13 @@ def NavigationTest():
 				
 				nx,ny,na = updateCAR_CALCXY(DirectionToTurn,car)
 
-				print(f"{nx} {nx} {na}")
+				print(f"{nx:3.4f} {ny:3.4f} {na}")
 
+				print(f"{car.X:3.4f} {car.Y:3.4f}")
 				car.setLocation(nx,ny)
 				car.setAngle(na)
 
 				Globals.iterateTime()
-				print(f"({car.X:3.4f},{car.Y:3.4f})")
 	finally:
 		rpi_chassis = Picarx()
 		rpi_chassis.stop()
