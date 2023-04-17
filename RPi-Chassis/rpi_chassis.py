@@ -254,8 +254,8 @@ def updateCAR_CALCXY(direction):
 
 	global car
 
-	newX = 0
-	newY = 0
+	newX = 0.0
+	newY = 0.0
 	newAngle = car.angle
 
 	displacement = 0
