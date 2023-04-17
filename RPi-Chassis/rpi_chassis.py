@@ -247,9 +247,6 @@ def turning_displacement_calc(x, y, angle_degrees, t, r, angular_velocity_degree
 
 def updateCAR_CALCXY(car:Traversal.Car,direction):
 	updateTime = Globals.GetUpdateTime()
-	print(f"Dt: {updateTime}")
-
-
 
 	newX = 0
 	newY = 0
@@ -262,7 +259,7 @@ def updateCAR_CALCXY(car:Traversal.Car,direction):
 		newX = displacement * math.sin(car.angle) + car.Y
 	elif(direction == 'L'):
 		newX,newY,newAngle = turning_displacement_calc(car.X,car.Y,car.angle,updateTime,RL_TURNING_CIRCLE_RADIUS,RL_TURNING_RATE)
-	elif(direction == 'L'):
+	elif(direction == 'R'):
 		newX,newY,newAngle = turning_displacement_calc(car.X,car.Y,car.angle,updateTime,RL_TURNING_CIRCLE_RADIUS,-RL_TURNING_RATE)
 
 	car.X = newX
@@ -300,6 +297,7 @@ def NavigationTest():
 		print("Finished initializing Navigation")
 		
 		Globals.printTime()
+		Globals.iterateTime()
 
 		print(f"{path}")
 
@@ -322,7 +320,6 @@ def NavigationTest():
 				elif(DirectionToTurn == 'R'):
 					move(rpi_chassis,'right')
 				
-				Globals.iterateTime()
 				updateCAR_CALCXY(car,DirectionToTurn)
 
 				print(f"({car.X:3.4f},{car.Y:3.4f})")
