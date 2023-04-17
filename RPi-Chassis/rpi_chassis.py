@@ -331,7 +331,7 @@ def NavigationTest():
 				
 				nx,ny,na = updateCAR_CALCXY(DirectionToTurn)
 
-				#print(f"{nx} , {ny} , {na}")
+				print(f"{nx} , {ny} , {na}")
 
 				car.UpdateLocation(nx,ny)
 				car.UpdateAngle(na)
