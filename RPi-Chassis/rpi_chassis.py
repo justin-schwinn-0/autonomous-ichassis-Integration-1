@@ -323,6 +323,7 @@ def NavigationTest():
 				move(rpi_chassis,'right')
 			
 			updateCAR_CALCXY(car,DirectionToTurn)
+			print(f"({car.X:3.4f},{car.Y:3.4f})")
 
 				
 def ODinit():
@@ -462,14 +463,7 @@ def ODtest():
 # This is the main driver function
 if __name__ == "__main__":
 	#new code here test
-	
-	print("test")
 
-	print(turning_displacement_calc(0,0,90,4,4,30))
-	print(turning_displacement_calc(0,0,90,4,4,-30))
-	print(turning_displacement_calc(0,0,0,4,4,30))
-	print(turning_displacement_calc(0,0,0,4,4,-30))
-
-	#NavigationTest()
+	NavigationTest()
 
 	#ODtest()
