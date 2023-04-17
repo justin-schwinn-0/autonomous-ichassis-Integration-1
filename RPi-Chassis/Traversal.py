@@ -94,8 +94,8 @@ def Test1Nodes():
 
 def Test2Nodes():
     a = Node('x',0,0,"A")
-    b = Node('x',0.5,-0.5,"B")
-    c = Node('x',0,-1.5,"C")
+    b = Node('x',1,0,"B")
+    c = Node('x',2,-0.5,"C")
     d = Node('x',0,0,"D")
     e = Node('x',-1,1,"D")
     f = Node('x',-2,0,"D")
