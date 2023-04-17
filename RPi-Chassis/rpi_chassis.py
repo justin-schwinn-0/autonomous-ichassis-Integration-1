@@ -323,9 +323,9 @@ def NavigationTest():
 				
 				nx,ny,na = updateCAR_CALCXY(DirectionToTurn,car)
 
-				print(f"{nx:3.4f} {ny:3.4f} {na}")
+				print(f"{nx:3.7f} {ny:3.7f} {na}")
 
-				print(f"{car.X:3.4f} {car.Y:3.4f}")
+				print(f"{car.X:3.7f} {car.Y:3.7f}")
 				car.setLocation(nx,ny)
 				car.setAngle(na)
 
