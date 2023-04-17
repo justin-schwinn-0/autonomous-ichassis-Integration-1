@@ -212,7 +212,7 @@ def TraverseToNodePICAR(graph:NavGraph,targetIndex:int,c:Car)->bool:
 
         targetlocX, targetlocY = graph.Nodes[targetIndex].getLocation()
         carLocX, carLocY = c.getLocation()
-        print(f"target: ({targetlocX:3.4f},{targetlocY:3.4f}) Car Location: ({carLocX:3.4f},{carLocY:3.4f}) Car angle: {c.angle:3.4f} angle Delta: {angleDelta:3.4f}")
+        #print(f"target: ({targetlocX:3.4f},{targetlocY:3.4f}) Car Location: ({carLocX:3.4f},{carLocY:3.4f}) Car angle: {c.angle:3.4f} angle Delta: {angleDelta:3.4f}")
 
     return False,direction
 

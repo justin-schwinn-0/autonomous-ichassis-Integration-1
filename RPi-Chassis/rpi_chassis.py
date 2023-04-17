@@ -208,9 +208,11 @@ def move(rpi_chassis, direction):
 	elif direction == 'left':
 		# Move the chassis left
 		rpi_chassis.set_dir_servo_angle(-TURN_AMOUNT)
+		rpi_chassis.forward(DEFAULT_SPEED)
 	elif direction == 'right':
 		# Move the chassis right
 		rpi_chassis.set_dir_servo_angle(TURN_AMOUNT)
+		rpi_chassis.forward(DEFAULT_SPEED)
 	else:
 		# If any unknown direction is given ignore it
 		return
