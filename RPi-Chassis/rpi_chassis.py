@@ -287,43 +287,48 @@ def NavInit():
 
 def NavigationTest():
 	
-	path, graph ,car, rpi_chassis = NavInit()
+	try:
+		path, graph ,car, rpi_chassis = NavInit()
 
 
 
-	GL_previous_time = time.perf_counter()
+		GL_previous_time = time.perf_counter()
 
 
-	curr_node = 0
+		curr_node = 0
 
-	time.sleep(0.5)
-	print("Finished initializing Navigation")
-	
-	printTime()
+		time.sleep(0.5)
+		print("Finished initializing Navigation")
+		
+		printTime()
 
-	print(f"{path}")
+		print(f"{path}")
 
-	i = 0
-	while i < len(path):
+		i = 0
+		while i < len(path):
 
-		reachedTargetNode, DirectionToTurn = Traversal.TraverseToNodePICAR(graph,path[i],car)
+			reachedTargetNode, DirectionToTurn = Traversal.TraverseToNodePICAR(graph,path[i],car)
 
 
 
-		if(reachedTargetNode):
-			i += 1
-			print(f"Node {i} reached")
-			move(rpi_chassis,'stop')
-		else:
-			if(DirectionToTurn == 'x'):
-				move(rpi_chassis,'forward')
-			elif(DirectionToTurn == 'L'):
-				move(rpi_chassis,'left')
-			elif(DirectionToTurn == 'R'):
-				move(rpi_chassis,'right')
-			
-			updateCAR_CALCXY(car,DirectionToTurn)
-			print(f"({car.X:3.4f},{car.Y:3.4f})")
+			if(reachedTargetNode):
+				i += 1
+				print(f"Node {i} reached")
+				move(rpi_chassis,'stop')
+			else:
+				if(DirectionToTurn == 'x'):
+					move(rpi_chassis,'forward')
+				elif(DirectionToTurn == 'L'):
+					move(rpi_chassis,'left')
+				elif(DirectionToTurn == 'R'):
+					move(rpi_chassis,'right')
+				
+				updateCAR_CALCXY(car,DirectionToTurn)
+				print(f"({car.X:3.4f},{car.Y:3.4f})")
+	except:
+		rpi_chassis = Picarx()
+		rpi_chassis.stop()
+		print("Exiting...")
 
 				
 def ODinit():
