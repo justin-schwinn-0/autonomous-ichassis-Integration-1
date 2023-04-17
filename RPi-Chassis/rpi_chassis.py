@@ -40,8 +40,22 @@ RL_TURNING_SPEED = 2.87456 / 6.80 # m/s
 class Globals:
 	Logstr = str('')
 	start_time = time.perf_counter()
-	prev_time = 0
-	curr_time = 0
+	prev_time = 0.0
+	curr_time = 0.0
+
+	def iterateTime():
+		Globals.prev_time = Globals.curr_time
+		Globals.curr_time = time.perf_counter()
+
+	def GetUpdateTime():
+		return Globals.curr_time - Globals.prev_time
+	
+	def printTime(type = "Elapsed"):
+		if(type == "Elapsed"):
+			print(f"Elasped Time: {Globals.curr_time - Globals.start_time} ")
+		elif (type == "update"):
+			print(f"Update Time: {Globals.curr_time - Globals.prev_time} ")
+
 
 
 # This is a helper function for object_detection. It reads in RPi Chassis object and a tuple.
@@ -201,24 +215,7 @@ def move(rpi_chassis, direction):
 		# If any unknown direction is given ignore it
 		return
 
-def getUpdateTime():
-	return Globals.curr_time - Globals.prev_time
 
-def printTime(type = "Elapsed"):
-	if(type == "Elapsed"):
-		print(f"Elasped Time: {Globals.curr_time - Globals.start_time} ")
-	elif (type == "update"):
-		print(f"Update Time: {Globals.curr_time - Globals.prev_time} ")
-				
-def iterateTime():
-	Globals.prev_time = Globals.curr_time
-	Globals.curr_time = time.perf_counter
-
-
-def printLog():
-	print(GL_LogStr)
-	GL_LogStr = ""
-	pass
 
 
 """
@@ -247,7 +244,7 @@ def turning_displacement_calc(x, y, angle_degrees, t, r, angular_velocity_degree
 	return (new_x, new_y,new_angle)
 
 def updateCAR_CALCXY(car:Traversal.Car,direction):
-	updateTime = getUpdateTime()
+	updateTime = Globals.GetUpdateTime()
 	print(f"Dt: {updateTime}")
 
 
@@ -323,7 +320,7 @@ def NavigationTest():
 				elif(DirectionToTurn == 'R'):
 					move(rpi_chassis,'right')
 				
-				iterateTime()
+				Globals.iterateTime()
 				updateCAR_CALCXY(car,DirectionToTurn)
 
 				print(f"({car.X:3.4f},{car.Y:3.4f})")
@@ -449,7 +446,7 @@ def ODtest():
 
 				printLog()
 
-				iterateTime()
+				Globals.iterateTime()
 
 				# Slow down output
 				#time.sleep(1)
@@ -467,11 +464,6 @@ def ODtest():
 			rpi_chassis.stop()
 			print("Exiting...")
 
-
-def initTime():
-	Globals.curr_time
-	Globals.start_time
-	Globals.prev_time
 # This is the main driver function
 if __name__ == "__main__":
 	#new code here test
