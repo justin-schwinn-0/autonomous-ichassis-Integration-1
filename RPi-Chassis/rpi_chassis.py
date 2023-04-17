@@ -306,9 +306,9 @@ def NavigationTest():
 
 			reachedTargetNode, DirectionToTurn = Traversal.TraverseToNodePICAR(graph,path[i],car)
 
-			print(f"reached:{reachedTargetNode},Direction: {DirectionToTurn}, p[i]: {path[i]}")
+			#print(f"reached:{reachedTargetNode},Direction: {DirectionToTurn}, p[i]: {path[i]}")
 
-			if(not not reachedTargetNode):
+			if(reachedTargetNode):
 				i += 1
 				print(f"Node {i} reached")
 				move(rpi_chassis,'stop')
