@@ -267,9 +267,7 @@ def updateCAR_CALCXY(direction):
 	elif(direction == 'R'):
 		newX,newY,newAngle = turning_displacement_calc(car.X,car.Y,car.angle,updateTime,RL_TURNING_CIRCLE_RADIUS,-RL_TURNING_RATE)
 
-	car.X = newX
-	car.Y = newY
-	car.angle = newAngle
+	return newX,newY, newAngle
 
 
 
@@ -327,8 +325,12 @@ def NavigationTest():
 				elif(DirectionToTurn == 'R'):
 					move(rpi_chassis,'right')
 				
-				updateCAR_CALCXY(DirectionToTurn)
+				nx,ny,na = updateCAR_CALCXY(DirectionToTurn)
 
+				print(f"{nx} , {ny} , {na}")
+
+				car.UpdateLocation(nx,ny)
+				car.UpdateAngle(na)
 				print(f"({car.X:3.4f},{car.Y:3.4f})")
 	finally:
 		rpi_chassis = Picarx()
