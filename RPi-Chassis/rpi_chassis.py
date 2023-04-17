@@ -261,7 +261,6 @@ def updateCAR_CALCXY(direction):
 	displacement = 0
 	displacement = RL_SPEED_FORWARD * updateTime
 
-	#print(f"{RL_SPEED_FORWARD} * {updateTime} = {displacement}")
 
 	if(direction == 'x'):
 		newX = displacement * math.cos(car.angle) + car.X
@@ -270,6 +269,10 @@ def updateCAR_CALCXY(direction):
 		newX,newY,newAngle = turning_displacement_calc(car.X,car.Y,car.angle,updateTime,RL_TURNING_CIRCLE_RADIUS,RL_TURNING_RATE)
 	elif(direction == 'R'):
 		newX,newY,newAngle = turning_displacement_calc(car.X,car.Y,car.angle,updateTime,RL_TURNING_CIRCLE_RADIUS,-RL_TURNING_RATE)
+
+	print(f"{newX} , {newY} , {newAngle}")
+
+
 
 	return newX,newY, newAngle
 
@@ -331,8 +334,7 @@ def NavigationTest():
 				
 				nx,ny,na = updateCAR_CALCXY(DirectionToTurn)
 
-				print(f"{nx} , {ny} , {na}")
-
+				
 				car.UpdateLocation(nx,ny)
 				car.UpdateAngle(na)
 
