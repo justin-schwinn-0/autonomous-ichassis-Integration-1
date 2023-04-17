@@ -323,7 +323,9 @@ def NavigationTest():
 				elif(DirectionToTurn == 'R'):
 					move(rpi_chassis,'right')
 				
+				iterateTime()
 				updateCAR_CALCXY(car,DirectionToTurn)
+
 				print(f"({car.X:3.4f},{car.Y:3.4f})")
 	except:
 		rpi_chassis = Picarx()
