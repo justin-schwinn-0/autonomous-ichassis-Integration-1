@@ -264,7 +264,7 @@ def updateCAR_CALCXY(direction):
 
 	if(direction == 'x'):
 		#print("gets into x displacment")
-		newX = displacement * math.cos(car.angle) + car.X
+		newX = (displacement * math.cos(car.angle) + car.X)
 		newX = displacement * math.sin(car.angle) + car.Y
 		print(f"{direction}     {displacement * math.cos(car.angle) + car.X} = {newX}")
 	elif(direction == 'L'):
