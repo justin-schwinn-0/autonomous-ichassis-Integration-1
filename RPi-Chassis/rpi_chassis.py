@@ -261,7 +261,7 @@ def updateCAR_CALCXY(direction):
 	displacement = 0
 	displacement = RL_SPEED_FORWARD * updateTime
 
-	print(f"{RL_SPEED_FORWARD} * {updateTime} = {displacement}")
+	#print(f"{RL_SPEED_FORWARD} * {updateTime} = {displacement}")
 
 	if(direction == 'x'):
 		newX = displacement * math.cos(car.angle) + car.X
@@ -337,7 +337,7 @@ def NavigationTest():
 				car.UpdateAngle(na)
 
 				Globals.iterateTime()
-				#print(f"({car.X:3.4f},{car.Y:3.4f})")
+				print(f"({car.X:3.4f},{car.Y:3.4f})")
 	finally:
 		rpi_chassis = Picarx()
 		rpi_chassis.stop()
