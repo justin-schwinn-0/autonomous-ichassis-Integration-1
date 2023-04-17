@@ -40,8 +40,8 @@ RL_TURNING_SPEED = 2.87456 / 6.80 # m/s
 class Globals:
 	Logstr = str('')
 	start_time = time.perf_counter()
-	prev_time = start_time
-	curr_time = start_time
+	prev_time = 0
+	curr_time = 0
 
 
 # This is a helper function for object_detection. It reads in RPi Chassis object and a tuple.
