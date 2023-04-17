@@ -36,6 +36,8 @@ RL_ANGLE = 0 #temp
 RL_TURNING_RATE = 52.9411 # degrees /s
 RL_TURNING_CIRCLE_RADIUS = 0.915 / 2 #m
 RL_TURNING_SPEED = 2.87456 / 6.80 # m/s
+	
+car = Traversal.Car()
 
 class Globals:
 	Logstr = str('')
@@ -43,7 +45,6 @@ class Globals:
 	prev_time = 0.0
 	curr_time = 0.0
 
-	car = Traversal.Car()
 
 	def iterateTime():
 		Globals.prev_time = Globals.curr_time
@@ -247,8 +248,10 @@ def turning_displacement_calc(x, y, angle_degrees, t, r, angular_velocity_degree
     # Return a tuple containing the new X and Y coordinates
 	return (new_x, new_y,new_angle)
 
-def updateCAR_CALCXY(direction, car:Traversal.Car = Globals.car):
+def updateCAR_CALCXY(direction):
 	updateTime = Globals.GetUpdateTime()
+
+	global car
 
 	newX = 0
 	newY = 0
@@ -277,16 +280,23 @@ def NavInit():
 	path, graph = Traversal.MoveTestCase(2)
 
 	rpi_chassis = Picarx()
+
+	global car
+
 	carData = Traversal.Car()
 	carData.UpdateAngle(0)
 	carData.UpdateLocation(0,0)
 
-	return path, graph ,carData, rpi_chassis
+	car = carData
+
+	return path, graph , rpi_chassis
 
 def NavigationTest():
 	
 	try:
-		path, graph ,car, rpi_chassis = NavInit()
+		path, graph, rpi_chassis = NavInit()
+
+		global car
 
 		curr_node = 0
 
@@ -306,8 +316,8 @@ def NavigationTest():
 			#print(f"reached:{reachedTargetNode},Direction: {DirectionToTurn}, p[i]: {path[i]}")
 
 			if(reachedTargetNode):
-				i += 1
 				print(f"Node {i} reached")
+				i += 1
 				move(rpi_chassis,'stop')
 			else:
 				if(DirectionToTurn == 'x'):
