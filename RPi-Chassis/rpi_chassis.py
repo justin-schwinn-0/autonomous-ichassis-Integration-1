@@ -301,8 +301,6 @@ def NavigationTest():
 
 		print(f"{path}")
 
-		print(car)
-
 		i = 0
 		while i < len(path):
 
@@ -314,8 +312,9 @@ def NavigationTest():
 				print(f"Node {i} reached")
 				i += 1
 				move(rpi_chassis,'stop')
-				print(car)
 			else:
+				print(car)
+
 				if(DirectionToTurn == 'x'):
 					#move(rpi_chassis,'forward')
 					move(rpi_chassis,'stop')
