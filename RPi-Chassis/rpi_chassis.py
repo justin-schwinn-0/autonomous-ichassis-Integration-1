@@ -301,6 +301,8 @@ def NavigationTest():
 
 		print(f"{path}")
 
+		print(car)
+
 		i = 0
 		while i < len(path):
 
@@ -314,15 +316,18 @@ def NavigationTest():
 				move(rpi_chassis,'stop')
 			else:
 				if(DirectionToTurn == 'x'):
-					move(rpi_chassis,'forward')
+					#move(rpi_chassis,'forward')
+					move(rpi_chassis,'stop')
 				elif(DirectionToTurn == 'L'):
-					move(rpi_chassis,'left')
+					#move(rpi_chassis,'left')
+					move(rpi_chassis,'stop')
 				elif(DirectionToTurn == 'R'):
-					move(rpi_chassis,'right')
+					#move(rpi_chassis,'right')
+					move(rpi_chassis,'stop')
 				
 				nx,ny,na = updateCAR_CALCXY(DirectionToTurn,car)
 
-				print(car)
+				#print(DirectionToTurn)
 				car.setLocation(nx,ny)
 				car.setAngle(na)
 
