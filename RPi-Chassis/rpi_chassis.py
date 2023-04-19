@@ -259,7 +259,7 @@ def updateCAR_CALCXY(direction, car:Traversal.Car):
 	displacement = 0
 	displacement = RL_SPEED_FORWARD * updateTime
 
-	print(f"car X: {car.X}")
+	print(f"car: {car}")
 
 	if(direction == 'x'):
 		newX = (displacement * math.cos(car.angle) + car.X)
