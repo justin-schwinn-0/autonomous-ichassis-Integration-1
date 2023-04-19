@@ -328,7 +328,7 @@ def NavigationTest():
 				car.setLocation(nx,ny)
 				car.setAngle(na)
 
-				print(na)
+				print(f"new angle {na}")
 
 
 				Globals.iterateTime()
