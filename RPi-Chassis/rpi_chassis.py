@@ -30,8 +30,7 @@ DEFAULT_SPEED = 50
 
 
 #these values help keep track of the picar physical location without use of the GPS
-RL_SPEED_FORWARD = 0.4061 # m/s
-RL_SPEED_TURNING = DEFAULT_SPEED * 0.03 # kill me
+RL_SPEED_FORWARD = 0.4061 # m/s # kill me
 RL_ANGLE = 0 #temp
 RL_TURNING_RATE = 52.9411 # degrees /s
 RL_TURNING_CIRCLE_RADIUS = 0.915 / 2 #m
@@ -56,7 +55,7 @@ class Globals:
 		if(type == "Elapsed"):
 			print(f"Elasped Time: {Globals.curr_time - Globals.start_time} ")
 		elif (type == "update"):
-			print(f"Update Time: {Globals.curr_time - Globals.prev_time} ")
+			print(f"Update Time: {Globals.GetUpdateTime()} ")
 
 
 
@@ -247,7 +246,7 @@ def turning_displacement_calc(x, y, angle_degrees, t, r, angular_velocity_degree
     # Return a tuple containing the new X and Y coordinates
 	return (new_x, new_y,new_angle)
 
-def updateCAR_CALCXY(direction, car):
+def updateCAR_CALCXY(direction, car:Traversal.Car):
 	updateTime = Globals.GetUpdateTime()
 
 	newX = 0.0
@@ -322,8 +321,6 @@ def NavigationTest():
 					move(rpi_chassis,'right')
 				
 				nx,ny,na = updateCAR_CALCXY(DirectionToTurn,car)
-
-				print(f"{nx:3.7f} {ny:3.7f} {na}")
 
 				print(car)
 				car.setLocation(nx,ny)
