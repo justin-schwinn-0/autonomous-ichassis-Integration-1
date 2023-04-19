@@ -333,6 +333,7 @@ def NavigationTest():
 				car.setAngle(na)
 
 				Globals.iterateTime()
+				time.sleep(0.2)
 	finally:
 		rpi_chassis = Picarx()
 		rpi_chassis.stop()
