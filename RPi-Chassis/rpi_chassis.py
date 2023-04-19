@@ -314,6 +314,7 @@ def NavigationTest():
 				print(f"Node {i} reached")
 				i += 1
 				move(rpi_chassis,'stop')
+				print(car)
 			else:
 				if(DirectionToTurn == 'x'):
 					#move(rpi_chassis,'forward')
