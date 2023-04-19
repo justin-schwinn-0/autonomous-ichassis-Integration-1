@@ -105,6 +105,16 @@ def Test2Nodes():
 
     return [a,b,c,d,e,f]
 
+def Test3Nodes():
+    a = Node('x',0,0,"A")
+    b = Node('x',0.5,-0.5,"B")
+    c = Node('x',2,-0.5,"C")
+    d = Node('x',0,0,"D")
+    e = Node('x',-1,1,"D")
+    f = Node('x',-2,0,"D")
+
+    return [a,b,c,d,e,f]
+
 #keep
 def TestCase1():
 
@@ -128,6 +138,20 @@ def TestCase1():
 def MoveTestCase(index:int = 3):
     graph = NavGraph()
     graph.setNodes(Test2Nodes())
+
+    graph.AddPaths(0,[1])
+    graph.AddPaths(1,[2])
+    graph.AddPaths(2,[3])
+    graph.AddPaths(3,[4])
+    graph.AddPaths(4,[5])
+
+    path = graph.PathFromAtoB(0,index)
+
+    return path,graph
+
+def turnTestCase(index:int = 3):
+    graph = NavGraph()
+    graph.setNodes(Test3Nodes())
 
     graph.AddPaths(0,[1])
     graph.AddPaths(1,[2])

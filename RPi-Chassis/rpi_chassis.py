@@ -277,7 +277,7 @@ def updateAngle_NOACC():
 	pass
 
 def NavInit():
-	path, graph = Traversal.MoveTestCase(1)
+	path, graph = Traversal.turnTestCase(1)
 
 	rpi_chassis = Picarx()
 
@@ -325,9 +325,11 @@ def NavigationTest():
 				
 				nx,ny,na = updateCAR_CALCXY(DirectionToTurn,car)
 
-				print(car.angle)
 				car.setLocation(nx,ny)
 				car.setAngle(na)
+
+				print(na)
+
 
 				Globals.iterateTime()
 				time.sleep(0.2)
