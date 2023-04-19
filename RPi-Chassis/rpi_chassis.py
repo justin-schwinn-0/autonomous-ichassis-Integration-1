@@ -277,7 +277,7 @@ def updateAngle_NOACC():
 	pass
 
 def NavInit():
-	path, graph = Traversal.MoveTestCase(2)
+	path, graph = Traversal.MoveTestCase(1)
 
 	rpi_chassis = Picarx()
 
