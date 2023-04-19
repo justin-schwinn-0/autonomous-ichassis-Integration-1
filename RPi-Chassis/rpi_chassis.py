@@ -234,7 +234,7 @@ given it's
 def turning_displacement_calc(x, y, angle_degrees, t, r, angular_velocity_degrees):
     # Convert angular velocity from degrees to radians per second
 
-	print(f"\nXi:{x} Yi {y} thetai {angle_degrees} \n T: {t} R: {r} dTheta {angular_velocity_degrees}\n")
+	#print(f"\nXi:{x} Yi {y} thetai {angle_degrees} \n T: {t} R: {r} dTheta {angular_velocity_degrees}\n")
 
 	angle = math.radians(angle_degrees)
 	angular_velocity = math.radians(angular_velocity_degrees)
@@ -259,7 +259,7 @@ def updateCAR_CALCXY(direction, car:Traversal.Car):
 	displacement = 0
 	displacement = RL_SPEED_FORWARD * updateTime
 
-	print(f"car: {car}")
+	#print(f"car: {car}")
 
 	if(direction == 'x'):
 		newX = (displacement * math.cos(car.angle) + car.X)
@@ -270,7 +270,7 @@ def updateCAR_CALCXY(direction, car:Traversal.Car):
 		newX,newY,newAngle = turning_displacement_calc(car.X,car.Y,car.angle,updateTime,RL_TURNING_CIRCLE_RADIUS,-RL_TURNING_RATE)
 
 
-
+	print(f"out Vals {direction} | X {newX} Y {newY} A{newAngle}")
 
 	return newX,newY, newAngle
 
