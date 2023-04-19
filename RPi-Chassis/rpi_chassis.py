@@ -233,6 +233,9 @@ given it's
 
 def turning_displacement_calc(x, y, angle_degrees, t, r, angular_velocity_degrees):
     # Convert angular velocity from degrees to radians per second
+
+	print(f"Xi:{x} Yi {y} thetai {angle_degrees} \n T: {t} R: {r} dTheta {angular_velocity_degrees}")
+
 	angle = math.radians(angle_degrees)
 	angular_velocity = math.radians(angular_velocity_degrees)
 
@@ -313,7 +316,7 @@ def NavigationTest():
 				i += 1
 				move(rpi_chassis,'stop')
 			else:
-				print(f"dir: {DirectionToTurn} car({car})")
+				#print(f"dir: {DirectionToTurn} car({car})")
 
 				if(DirectionToTurn == 'x'):
 					#move(rpi_chassis,'forward')
@@ -337,6 +340,7 @@ def NavigationTest():
 		rpi_chassis = Picarx()
 		rpi_chassis.stop()
 		print("Exiting...")
+		exit()
 
 				
 def ODinit():
