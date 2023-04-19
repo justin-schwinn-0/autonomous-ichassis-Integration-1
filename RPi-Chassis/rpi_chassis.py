@@ -313,7 +313,7 @@ def NavigationTest():
 				i += 1
 				move(rpi_chassis,'stop')
 			else:
-				print(car)
+				print(f"dir: {DirectionToTurn} car({car})")
 
 				if(DirectionToTurn == 'x'):
 					#move(rpi_chassis,'forward')
