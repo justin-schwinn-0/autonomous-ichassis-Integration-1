@@ -84,7 +84,6 @@ class Car:
 
     def __str__(self) -> str:
         return f"X:{self.X} Y:{self.Y} Angle:{self.angle}"
-        pass
 
 def Test1Nodes():
     a = Node('x',-2,0,"A")
