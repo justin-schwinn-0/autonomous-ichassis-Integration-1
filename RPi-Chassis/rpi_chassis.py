@@ -234,7 +234,7 @@ given it's
 def turning_displacement_calc(x, y, angle_degrees, t, r, angular_velocity_degrees):
     # Convert angular velocity from degrees to radians per second
 
-	print(f"Xi:{x} Yi {y} thetai {angle_degrees} \n T: {t} R: {r} dTheta {angular_velocity_degrees}\n")
+	print(f"\nXi:{x} Yi {y} thetai {angle_degrees} \n T: {t} R: {r} dTheta {angular_velocity_degrees}\n")
 
 	angle = math.radians(angle_degrees)
 	angular_velocity = math.radians(angular_velocity_degrees)
@@ -280,7 +280,7 @@ def updateAngle_NOACC():
 	pass
 
 def NavInit():
-	path, graph = Traversal.MoveTestCase(2)
+	path, graph = Traversal.MoveTestCase(3)
 
 	rpi_chassis = Picarx()
 
@@ -300,10 +300,9 @@ def NavigationTest():
 		time.sleep(0.5)
 		print("Finished initializing Navigation")
 		
-		Globals.printTime()
 		Globals.iterateTime()
 
-		print(f"{path}")
+		print(f"path:{path}")
 
 		i = 0
 		while i < len(path):
