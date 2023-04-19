@@ -302,6 +302,7 @@ def NavigationTest():
 		print("Finished initializing Navigation")
 		
 		Globals.iterateTime()
+		Globals.iterateTime()
 
 		print(f"path:{path}")
 
