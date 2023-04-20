@@ -38,7 +38,7 @@ class Car:
     
     # returns the direction of the car and the difference between the direction of the car and the desired direction of the car to hit the next node
     def getturnData(self, targetAngle): #L is left, x is no turn, R is right
-        angleDiff = targetAngle - self.angle
+        angleDiff = self.angle - targetAngle
 
         absDiff = abs(angleDiff)
         dir = 0
