@@ -387,7 +387,7 @@ def NavigationTest():
 
 
 				Globals.iterateTime()
-				# time.sleep(0.05)
+				time.sleep(0.05)
 
 		print("path complete!")
 		rpi_chassis.stop()
