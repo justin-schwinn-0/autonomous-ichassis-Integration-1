@@ -264,7 +264,7 @@ def turning_displacement_calc(x, y, angle_degrees, t, r, angular_velocity_degree
 
     # Calculate the new X and Y coordinates
 	new_x = x + r * (math.cos(new_angle) - math.cos(angle))
-	new_y = y + r * (math.sin(angle) - math.sin(new_angle))
+	new_y = y + r * (math.cos(angle) - math.cos(new_angle))
 
     # Return a tuple containing the new X and Y coordinates
 	return (new_x, new_y)
