@@ -180,7 +180,7 @@ def MoveTestCase(index:int = 3):
     graph.AddPaths(3,[0])
     graph.AddPaths(4,[5])
 
-
+    
     path = graph.PathFromAtoB(0,index)
     path = [0,1,2,3,0]
 
