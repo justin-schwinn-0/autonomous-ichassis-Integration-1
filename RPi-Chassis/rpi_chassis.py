@@ -316,7 +316,7 @@ def gyroinit():
 	kalman_x = 0.0
 	kalman_y = 0.0
 
-	return (gyro_x_angle,gyro_y_angle,gyro_z_angle,c_fangle_x,c_fangle_y,kalman_x,kalman_y)
+	return [gyro_x_angle,gyro_y_angle,gyro_z_angle,c_fangle_x,c_fangle_y,kalman_x,kalman_y]
 
 def NavInit():
 	path, graph = Traversal.turnTestCase(1)
