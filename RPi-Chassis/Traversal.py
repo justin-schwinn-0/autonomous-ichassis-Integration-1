@@ -225,7 +225,7 @@ def TraverseToNodePICAR(graph:NavGraph,targetIndex:int,c:Car)->bool:
     #if object detection is good, go on
     #if path finding is good, go on.
 
-    targetAngle = AngleFromAToB(c,graph.Nodes[targetIndex])
+    targetAngle = fixAngle(AngleFromAToB(c,graph.Nodes[targetIndex]))
     distanceToTarget = distanceFromAtoB(c,graph.Nodes[targetIndex])
     if distanceToTarget < Car.NodeDistanceTolerance: # reached node, return true
         return True,None,None
