@@ -179,21 +179,19 @@ def get_gyrometer(gyro_x_angle, gyro_y_angle, gyro_z_angle):
 
 	# Calculate the loop period (length between Gyro Reads)
 	updateTime = Globals.GetUpdateTime()
-	print("gets time")
 	# Convert our raw values to degrees
 	rate_x = raw_x * G_GAIN
 	rate_y = raw_y * G_GAIN
 	rate_z = raw_z * G_GAIN
 
-	print("gets rates")
 
 	# Calcualte the angles from the gyro
 	gyro_x_angle += rate_x * updateTime
 	gyro_y_angle += rate_y * updateTime
 	gyro_z_angle += rate_z * updateTime
 
-	print("gets new angles")
 	# Return our calculated angles
+	print(f"gz {gyro_z_angle}")
 	return gyro_x_angle, gyro_y_angle, gyro_z_angle
 
 # Returns the (x,y,z) coordinates of the magnetometer
@@ -374,14 +372,12 @@ def NavigationTest():
 
 				car.setLocation(nx,ny)
 				car.setAngle(na)
-				gx,gy,gz,s = get_gyrometer(angleData[0],angleData[1],angleData[2])
+				gx,gy,gz = get_gyrometer(angleData[0],angleData[1],angleData[2])
 
 				print("out of func")
 				angleData[0] = gx
 				angleData[1] = gy
 				angleData[2] = gz
-
-				print(f"gz: {angleData[2]}")
 
 
 				Globals.iterateTime()
