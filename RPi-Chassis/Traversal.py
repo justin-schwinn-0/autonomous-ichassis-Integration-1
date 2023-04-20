@@ -134,7 +134,7 @@ def Test2Nodes():
     a = Node('x',0,0,"A")
     b = Node('x',1,0,"B")
     c = Node('x',2,-0.5,"C")
-    d = Node('x',0,0,"D")
+    d = Node('x',1,-1,"D")
     e = Node('x',-1,1,"D")
     f = Node('x',-2,0,"D")
 
@@ -177,8 +177,8 @@ def MoveTestCase(index:int = 3):
     graph.AddPaths(0,[1])
     graph.AddPaths(1,[2])
     graph.AddPaths(2,[3])
-    graph.AddPaths(3,[4])
-    graph.AddPaths(4,[5])
+    graph.AddPaths(3,[0])
+    # graph.AddPaths(4,[5])
 
     path = graph.PathFromAtoB(0,index)
 
