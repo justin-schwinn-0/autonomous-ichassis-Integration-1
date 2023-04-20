@@ -346,6 +346,8 @@ def Nav_Init():
 	carData.setAngle(0)
 	carData.setLocation(0,0)
 
+	print("nav init done")
+
 	return path, graph ,carData, rpi_chassis
 
 def NavigationTest():

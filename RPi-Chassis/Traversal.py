@@ -184,6 +184,7 @@ def MoveTestCase(index:int = 3):
     path = graph.PathFromAtoB(0,index)
     path = [0,1,2,3,0]
 
+    print("gets done with move test case")
     return path,graph
 
 def turnTestCase(index:int = 3):
