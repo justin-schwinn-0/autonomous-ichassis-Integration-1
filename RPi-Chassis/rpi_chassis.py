@@ -357,7 +357,7 @@ def NavigationTest():
 		i = 0
 		while i < len(path):
 
-			reachedTargetNode, DirectionToTurn, tA,dA = Traversal.TraverseToNodePICAR(graph,path[i],car)
+			reachedTargetNode, DirectionToTurn, tA ,dA = Traversal.TraverseToNodePICAR(graph,path[i],car)
 
 			#print(f"reached:{reachedTargetNode},Direction: {DirectionToTurn}, p[i]: {path[i]}")
 			
