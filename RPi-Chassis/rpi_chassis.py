@@ -362,9 +362,9 @@ def NavigationTest():
 			#print(f"reached:{reachedTargetNode},Direction: {DirectionToTurn}, p[i]: {path[i]}")
 
 			if(reachedTargetNode):
-				print(f"Node {i} reached")
+				print(f"Node {i} reached. New Target: {graph.nodes[path[i]].getlocation()}")
 				i += 1
-				move(rpi_chassis,'stop')
+
 			else:
 				#print(f"dir: {DirectionToTurn} car({car})")
 
