@@ -328,9 +328,9 @@ def NavInit():
 
 def NavigationTest():
 	
+	angleData = gyroinit()
 	try:
 		path, graph, car, rpi_chassis = NavInit()
-		angleData = gyroinit()
 
 		curr_node = 0
 
