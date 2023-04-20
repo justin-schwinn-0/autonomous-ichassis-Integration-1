@@ -273,7 +273,7 @@ def Calc_Angle(angle:float, direction):
 	newAngle = angle
 	angleDifferential = RL_TURNING_RATE * Globals.GetUpdateTime()
 
-	print(f"dir:{direction} A: {angle:3.5f} dA: {angleDifferential:3.5f} A' {newAngle:3.5f}")
+	# print(f"dir:{direction} A: {angle:3.5f} dA: {angleDifferential:3.5f} A' {newAngle:3.5f}")
 
 	if(direction == 'L'):
 		newAngle += angleDifferential
