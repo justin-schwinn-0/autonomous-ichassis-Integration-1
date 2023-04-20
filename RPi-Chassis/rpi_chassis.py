@@ -27,6 +27,8 @@ AVOID_OBJECTS = ["person", "car", "Ultrasonic"] # add things that robot should d
 TURN_AMOUNT = 15
 DEFAULT_SPEED = 50
 
+G_GAIN = 0.070
+
 
 
 #these values help keep track of the picar physical location without use of the GPS
