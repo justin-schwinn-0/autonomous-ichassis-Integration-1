@@ -362,7 +362,7 @@ def NavigationTest():
 			#print(f"reached:{reachedTargetNode},Direction: {DirectionToTurn}, p[i]: {path[i]}")
 			
 			if(reachedTargetNode):
-				print(f"Node at {graph.Nodes[path[i]].getLocation()} reached, going to {i}")
+				print(f"Reached node {i}")
 				i += 1
 
 			else:
@@ -376,6 +376,7 @@ def NavigationTest():
 					# move(rpi_chassis,'stop')
 				elif(DirectionToTurn == 'R'):
 					move(rpi_chassis,'right')
+					print(f"A {car.angle}")
 					# move(rpi_chassis,'stop')
 				
 				nx,ny= updateCAR_CALCXY(DirectionToTurn,car)
