@@ -45,10 +45,10 @@ class Car:
         # L is left, x is no turn, R is right
         if(absDiff < Car.AngleTolerance):
             dir = "x"
-        elif(angleDiff <= 180): # turn right
-            dir = 'R'
-        else:
+        elif(angleDiff <= 180): # turn left
             dir = 'L'
+        else:
+            dir = 'R'
 
         return dir,angleDiff
 
