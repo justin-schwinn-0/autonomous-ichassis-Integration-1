@@ -387,6 +387,9 @@ def NavigationTest():
 
 				Globals.iterateTime()
 				time.sleep(0.1)
+
+		print("path complete!")
+		rpi_chassis.stop()
 	finally:
 		rpi_chassis = Picarx()
 		rpi_chassis.stop()
