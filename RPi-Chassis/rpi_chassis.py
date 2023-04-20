@@ -284,13 +284,13 @@ def updateCAR_CALCXY(direction, car:Traversal.Car):
 		newX = displacement * math.cos(car.angle) + car.X
 		newY = displacement * math.sin(car.angle) + car.Y
 	elif(direction == 'L'):
-		newX,newY,newAngle = turning_displacement_calc(car.X,car.Y,car.angle,updateTime,RL_TURNING_CIRCLE_RADIUS,RL_TURNING_RATE)
+		newX,newY,= turning_displacement_calc(car.X,car.Y,car.angle,updateTime,RL_TURNING_CIRCLE_RADIUS,RL_TURNING_RATE)
 	elif(direction == 'R'):
-		newX,newY,newAngle = turning_displacement_calc(car.X,car.Y,car.angle,updateTime,RL_TURNING_CIRCLE_RADIUS,-RL_TURNING_RATE)
+		newX,newY = turning_displacement_calc(car.X,car.Y,car.angle,updateTime,RL_TURNING_CIRCLE_RADIUS,-RL_TURNING_RATE)
 
 
 
-	return newX,newY, newAngle
+	return newX,newY
 
 
 
