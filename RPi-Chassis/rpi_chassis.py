@@ -11,7 +11,7 @@ from picarx import Picarx 		# Import our Picarx object
 from picamera import PiCamera		# Import our Picamera object
 from picamera.array import PiRGBArray  	# Import the RGB array for picamera
 import cv2				# Import opencv, used for object detection/image proccessing
-import rpi_imu				# Import our IMU script
+from rpi_imu import IMU				# Import our IMU script
 from rpi_gps import GPS			# Import our GPS script
 # Import tflite, used for running an object-detection model
 from tflite_support.task import core
