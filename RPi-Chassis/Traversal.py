@@ -283,8 +283,8 @@ if __name__ == "__main__":
     c = Car()
     
 
-    for a in range(-360,400,10):
-        print(f"{a} to {fixAngle180(a)}")
+    for a in range(-360,400,15):
+        print(f"{a} to {math.sin(math.radians(a))}")
 
 
     i = 0
