@@ -172,16 +172,13 @@ def get_accelerometer():
 # Returns the (x,y,z) coordinates of the gyrometer
 def get_gyrometer(gyro_x_angle, gyro_y_angle, gyro_z_angle):
 
-	print("in func")
 	# Get our raw values
 	raw_x = IMU.readGYRx()
 	raw_y = IMU.readGYRy()
 	raw_z =  IMU.readGYRz()
 
-	print("b4 time get")
 	# Calculate the loop period (length between Gyro Reads)
 	updateTime = Globals.GetUpdateTime()
-	print("loop period: " + str(Globals.GetUpdateTime()))
 	# Convert our raw values to degrees
 	rate_x = raw_x * G_GAIN
 	rate_y = raw_y * G_GAIN
@@ -375,6 +372,7 @@ def NavigationTest():
 				car.setAngle(na)
 				gx,gy,gz,s = get_gyrometer(angleData[0],angleData[1],angleData[2])
 
+				print("out of func")
 				angleData[0] = gx
 				angleData[1] = gy
 				angleData[2] = gz
