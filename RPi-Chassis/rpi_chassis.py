@@ -363,8 +363,8 @@ def NavigationTest():
 			
 			if(reachedTargetNode):
 				print(f"Node {path[i]} reached")
-				print(f"New Target: {graph.Nodes[path[i]].getLocation()}")
 				i += 1
+				print(f"New Target: {graph.Nodes[path[i]].getLocation()}")
 
 			else:
 				#print(f"dir: {DirectionToTurn} car({car})")
