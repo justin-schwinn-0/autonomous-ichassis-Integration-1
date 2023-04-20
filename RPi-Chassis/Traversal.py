@@ -45,7 +45,7 @@ class Car:
         # L is left, x is no turn, R is right
         if(absDiff < Car.AngleTolerance):
             dir = "x"
-        elif(angleDiff <= 180): # turn left
+        elif(angleDiff >= 180): # turn left
             dir = 'L'
         else:
             dir = 'R'
@@ -238,7 +238,7 @@ def TraverseToNodePICAR(graph:NavGraph,targetIndex:int,c:Car)->bool:
         # carLocX, carLocY = c.getLocation()
         #print(f"target: ({targetlocX:3.4f},{targetlocY:3.4f}) Car Location: ({carLocX:3.4f},{carLocY:3.4f}) Car angle: {c.angle:3.4f} angle Delta: {angleDelta:3.4f}")
 
-    return False,direction, targetAngle
+    return False,direction, targetAngle, angleDelta
 
 
 # python3 traversal.py starts here
