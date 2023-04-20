@@ -389,7 +389,7 @@ def NavigationTest():
 				time.sleep(0.5)
 	finally:
 		rpi_chassis = Picarx()
-		#rpi_chassis.stop()
+		rpi_chassis.stop()
 		print("Exiting...")
 		exit()
 
