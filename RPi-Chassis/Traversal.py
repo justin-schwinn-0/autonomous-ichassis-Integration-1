@@ -12,6 +12,15 @@ def AngleFromAToB(a,b)-> float:
 
     return angle
 
+def AngleFromAtoXY(a,X,Y)->float:
+    ax,ay = a.getLocation()
+    bx,by = X,Y
+
+    radians = math.atan2(by-ay,bx-ax)
+    angle = math.degrees(radians)
+
+    return angle
+
 def distanceFromAtoB(a,b)-> float:
     ax,ay = a.getLocation()
     bx,by = b.getLocation()
@@ -52,6 +61,24 @@ class Car:
 
         return dir,angleDiff
 
+
+    def getTurnDataPICAR(self, tX,tY): # takes in targetX and target y coords
+        target_Angle = AngleFromAtoXY(self,tX,tY)
+
+        angleDifferential = target_Angle - self.angle
+        dir = 'x'
+
+        if(angleDifferential > 180):
+            angleDifferential = 360- angleDifferential
+
+        if(abs(angleDifferential) < Car.AngleTolerance):
+            dir = 'x'
+        elif(angleDifferential > 0): #turn left
+            dir = 'L'
+        else:
+            dir = 'R'
+        
+        return dir, angleDifferential
     #turning logic and simulation, not for picar, might be resused later if we need a microsim
     def turn(self,direction, angleDelta): # most of this code would be repleaced by calls to PicarTurnleft
         if(direction == 'x'):
@@ -225,20 +252,19 @@ def TraverseToNodePICAR(graph:NavGraph,targetIndex:int,c:Car)->bool:
     #if object detection is good, go on
     #if path finding is good, go on.
 
-    targetAngle = fixAngle(AngleFromAToB(c,graph.Nodes[targetIndex]))
     distanceToTarget = distanceFromAtoB(c,graph.Nodes[targetIndex])
     if distanceToTarget < Car.NodeDistanceTolerance: # reached node, return true
-        return True,None,None,None
+        return True,None,None
     else: 
         # turn the car if necessary
         # then move forward at a low speed if turning, higher if no turn
-        direction, angleDelta = c.getturnData(targetAngle)
-
+        nodeX,nodeY = graph.Nodes[targetIndex].getLocation()
+        direction, angleDelta = c.getTurnDataPICAR(nodeX,nodeY)
         # targetlocX, targetlocY = graph.Nodes[targetIndex].getLocation()
         # carLocX, carLocY = c.getLocation()
         #print(f"target: ({targetlocX:3.4f},{targetlocY:3.4f}) Car Location: ({carLocX:3.4f},{carLocY:3.4f}) Car angle: {c.angle:3.4f} angle Delta: {angleDelta:3.4f}")
 
-    return False,direction, targetAngle, angleDelta
+    return False,direction, angleDelta
 
 
 # python3 traversal.py starts here
