@@ -272,6 +272,9 @@ def turning_displacement_calc(x, y, angle_degrees, t, r, angular_velocity_degree
 def Calc_Angle(angle:float, direction):
 	newAngle = angle
 	angleDifferential = RL_TURNING_RATE * Globals.GetUpdateTime()
+
+	print(f"dA: {angleDifferential}")
+
 	if(direction == 'L'):
 		newAngle += angleDifferential
 	elif(direction == "R"):
@@ -384,7 +387,7 @@ def NavigationTest():
 
 
 			Globals.iterateTime()
-			time.sleep(0.2)
+			time.sleep(0.5)
 	# finally:
 	# 	rpi_chassis = Picarx()
 	# 	#rpi_chassis.stop()
