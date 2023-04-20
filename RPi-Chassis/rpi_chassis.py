@@ -168,9 +168,29 @@ def get_accelerometer():
 
 
 # Returns the (x,y,z) coordinates of the gyrometer
-def get_gyrometer():
-	return (IMU.readGYRx(), IMU.readGYRy(), IMU.readGYRz())
+def get_gyrometer(starting_period, gyro_x_angle, gyro_y_angle, gyro_z_angle):
 
+	# Get our raw values
+	raw_x = IMU.readGYRx()
+	raw_y = IMU.readGYRy()
+	raw_z =  IMU.readGYRz()
+
+	# Calculate the loop period (length between Gyro Reads)
+	loop_period = current_period.microseconds/(1000000.0)
+	starting_period = datetime.datetime.now()
+	print("loop period: " + str(Globals.GetUpdateTime()))
+	# Convert our raw values to degrees
+	rate_x = raw_x * G_GAIN
+	rate_y = raw_y * G_GAIN
+	rate_z = raw_z * G_GAIN
+
+	# Calcualte the angles from the gyro
+	gyro_x_angle += rate_x * loop_period
+	gyro_y_angle += rate_y * loop_period
+	gyro_z_angle += rate_z * loop_period
+
+	# Return our calculated angles
+	return (gyro_x_angle, gyro_y_angle, gyro_z_angle)
 
 # Returns the (x,y,z) coordinates of the magnetometer
 def get_magnetometer():
@@ -276,8 +296,27 @@ def updateCAR_CALCXY(direction, car:Traversal.Car):
 def updateAngle_NOACC():
 	pass
 
+def gyroinit():
+
+	IMU.detectIMU()
+	if IMU.BerryIMUversion == 99:
+		print("No Berry IMU Found!")
+	else:
+		IMU.initIMU()
+	# Starting variables for IMU
+	gyro_x_angle = 0.0
+	gyro_y_angle = 0.0
+	gyro_z_angle = 0.0
+	c_fangle_x = 0.0
+	c_fangle_y = 0.0
+	kalman_x = 0.0
+	kalman_y = 0.0
+
+	return (gyro_x_angle,gyro_y_angle,gyro_z_angle,c_fangle_x,c_fangle_y,kalman_x,kalman_y)
+
 def NavInit():
 	path, graph = Traversal.turnTestCase(1)
+
 
 	rpi_chassis = Picarx()
 
@@ -291,6 +330,7 @@ def NavigationTest():
 	
 	try:
 		path, graph, car, rpi_chassis = NavInit()
+		angleData = gyroinit()
 
 		curr_node = 0
 
@@ -317,18 +357,27 @@ def NavigationTest():
 				#print(f"dir: {DirectionToTurn} car({car})")
 
 				if(DirectionToTurn == 'x'):
-					move(rpi_chassis,'forward')
+					# move(rpi_chassis,'forward')
+					move(rpi_chassis,'stop')
 				elif(DirectionToTurn == 'L'):
-					move(rpi_chassis,'left')
+					# move(rpi_chassis,'left')
+					move(rpi_chassis,'stop')
 				elif(DirectionToTurn == 'R'):
-					move(rpi_chassis,'right')
+					# move(rpi_chassis,'right')
+					move(rpi_chassis,'stop')
 				
 				nx,ny,na = updateCAR_CALCXY(DirectionToTurn,car)
 
 				car.setLocation(nx,ny)
 				car.setAngle(na)
 
-				print(f"new angle {na}")
+				gx,gy,gz,s = get_gyrometer(angleData[0],angleData[1],angleData[2])
+
+				angleData[0] = gx
+				angleData[1] = gy
+				angleData[2] = gz
+
+				print(f"gz: {angleData[2]}")
 
 
 				Globals.iterateTime()

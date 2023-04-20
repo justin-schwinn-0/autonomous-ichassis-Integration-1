@@ -25,10 +25,10 @@ def fixAngle(angle):
 
 class Car:
     
-    AngleTolerance = 10.0
-    NodeDistanceTolerance = 0.35
+    AngleTolerance = 5.0
+    NodeDistanceTolerance = 0.1
     MaxTurn = 30                    # for testing purposes, not used on piccar
-    TurningMoveSpeed = 0.2
+    TurningMoveSpeed = 0.1
     NormalSpeed = .4
 
     def __init__(self) -> None:
@@ -207,7 +207,7 @@ def TraverseToNode(graph:NavGraph,targetIndex:int,c:Car)->bool:
     targetAngle = AngleFromAToB(c,graph.Nodes[targetIndex])
     distanceToTarget = distanceFromAtoB(c,graph.Nodes[targetIndex])
     if distanceToTarget < Car.NodeDistanceTolerance: # reached node, return true
-        return True,None
+        return True
     else: 
         #turn the car if necessary
         # then move forward at a low speed if turning, higher if no turn
@@ -219,8 +219,7 @@ def TraverseToNode(graph:NavGraph,targetIndex:int,c:Car)->bool:
         carLocX, carLocY = c.getLocation()
         print(f"target: ({targetlocX:3.4f},{targetlocY:3.4f}) Car Location: ({carLocX:3.4f},{carLocY:3.4f}) Car angle: {c.angle:3.4f} angle Delta: {angleDelta:3.4f}")
 
-    return False,
-
+    return False
 
 def TraverseToNodePICAR(graph:NavGraph,targetIndex:int,c:Car)->bool: 
     # return true if reached node, false otherwise
@@ -256,5 +255,6 @@ if __name__ == "__main__":
         reachedTargetNode = TraverseToNode(g,p[i],c)
         if(reachedTargetNode):
             print("node",i, "reached")
+            print(f"dist: {distanceFromAtoB(c,g.Nodes[p[i]])}")
             i+=1
     print("destination reached")
