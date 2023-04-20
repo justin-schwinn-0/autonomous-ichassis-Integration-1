@@ -228,7 +228,7 @@ def TraverseToNodePICAR(graph:NavGraph,targetIndex:int,c:Car)->bool:
     targetAngle = fixAngle(AngleFromAToB(c,graph.Nodes[targetIndex]))
     distanceToTarget = distanceFromAtoB(c,graph.Nodes[targetIndex])
     if distanceToTarget < Car.NodeDistanceTolerance: # reached node, return true
-        return True,None,None
+        return True,None,None,None
     else: 
         # turn the car if necessary
         # then move forward at a low speed if turning, higher if no turn
