@@ -269,9 +269,16 @@ def turning_displacement_calc(x, y, angle_degrees, t, r, angular_velocity_degree
     # Return a tuple containing the new X and Y coordinates
 	return (new_x, new_y)
 
-def Calc_Angle(angle:float, angular_velocity = RL_TURNING_RATE):
-	return angle + angular_velocity * Globals.GetUpdateTime()
+def Calc_Angle(angle:float, direction):
+	newAngle = angle
+	angleDifferential = RL_TURNING_RATE * Globals.GetUpdateTime()
+	if(direction == 'L'):
+		newAngle += angleDifferential
+	elif(direction == "R"):
+		newAngle -= angleDifferential
 
+	return newAngle
+	
 def updateCAR_CALCXY(direction, car:Traversal.Car):
 	updateTime = Globals.GetUpdateTime()
 
@@ -295,12 +302,10 @@ def updateCAR_CALCXY(direction, car:Traversal.Car):
 
 	return newX,newY
 
-
-
 def updateAngle_NOACC():
 	pass
 
-def gyroinit():
+def gyro_init():
 
 	IMU.detectIMU()
 	if IMU.BerryIMUversion == 99:
@@ -318,7 +323,8 @@ def gyroinit():
 
 	return [gyro_x_angle,gyro_y_angle,gyro_z_angle,c_fangle_x,c_fangle_y,kalman_x,kalman_y]
 
-def NavInit():
+
+def Nav_Init():
 	path, graph = Traversal.turnTestCase(1)
 
 
@@ -333,7 +339,7 @@ def NavInit():
 def NavigationTest():
 	
 	#try:
-	path, graph, car, rpi_chassis = NavInit()
+	path, graph, car, rpi_chassis = Nav_Init()
 
 	curr_node = 0
 
@@ -371,8 +377,7 @@ def NavigationTest():
 			
 			nx,ny= updateCAR_CALCXY(DirectionToTurn,car)
 
-			car.setAngle(Calc_Angle(car.angle))
-
+			car.setAngle(Calc_Angle(car.angle,DirectionToTurn))
 			car.setLocation(nx,ny)
 
 			print(car)
@@ -419,7 +424,7 @@ def ODtest():
 		# Anytime there is an exception/CTRL+C
 		try:
 
-			NavInit()
+			Nav_Init()
 			
 			raw_capture, detector,rpi_chassis, rpi_camera = ODinit()
 
