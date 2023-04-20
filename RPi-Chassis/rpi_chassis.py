@@ -170,7 +170,7 @@ def get_accelerometer():
 
 
 # Returns the (x,y,z) coordinates of the gyrometer
-def get_gyrometer(starting_period, gyro_x_angle, gyro_y_angle, gyro_z_angle):
+def get_gyrometer(gyro_x_angle, gyro_y_angle, gyro_z_angle):
 
 	print("in func")
 	# Get our raw values
