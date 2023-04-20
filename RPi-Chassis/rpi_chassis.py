@@ -331,6 +331,10 @@ def Nav_Init():
 	path, graph = Traversal.MoveTestCase(2)
 
 
+	Traversal.Car.AngleTolerance = 10.0
+	Traversal.Car.NodeDistanceTolerance = .1
+
+
 	rpi_chassis = Picarx()
 
 	carData = Traversal.Car()
