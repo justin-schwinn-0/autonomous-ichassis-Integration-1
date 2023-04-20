@@ -360,9 +360,10 @@ def NavigationTest():
 			reachedTargetNode, DirectionToTurn = Traversal.TraverseToNodePICAR(graph,path[i],car)
 
 			#print(f"reached:{reachedTargetNode},Direction: {DirectionToTurn}, p[i]: {path[i]}")
-
+			
 			if(reachedTargetNode):
-				print(f"Node {i} reached. New Target: {graph.Nodes[path[i]].getlocation()}")
+				print(f"Node {path[i]} reached")
+				print(f"New Target: {graph.Nodes[path[i]].getLocation()}")
 				i += 1
 
 			else:
