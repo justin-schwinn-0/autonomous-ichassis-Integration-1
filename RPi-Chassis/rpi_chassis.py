@@ -330,9 +330,9 @@ def NavInit():
 
 def NavigationTest():
 	
-	angleData = gyroinit()
 	try:
 		path, graph, car, rpi_chassis = NavInit()
+		angleData = gyroinit()
 
 		curr_node = 0
 
@@ -372,7 +372,7 @@ def NavigationTest():
 
 				car.setLocation(nx,ny)
 				car.setAngle(na)
-
+				print("gets here")
 				gx,gy,gz,s = get_gyrometer(angleData[0],angleData[1],angleData[2])
 
 				angleData[0] = gx
