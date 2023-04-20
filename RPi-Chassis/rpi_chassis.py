@@ -329,65 +329,65 @@ def NavInit():
 
 def NavigationTest():
 	
-	try:
-		path, graph, car, rpi_chassis = NavInit()
-		angleData = gyroinit()
+	#try:
+	path, graph, car, rpi_chassis = NavInit()
+	angleData = gyroinit()
 
-		curr_node = 0
+	curr_node = 0
 
-		time.sleep(0.5)
-		print("Finished initializing Navigation")
-		
-		Globals.iterateTime()
-		Globals.iterateTime()
+	time.sleep(0.5)
+	print("Finished initializing Navigation")
+	
+	Globals.iterateTime()
+	Globals.iterateTime()
 
-		print(f"path:{path}")
+	print(f"path:{path}")
 
-		i = 0
-		while i < len(path):
+	i = 0
+	while i < len(path):
 
-			reachedTargetNode, DirectionToTurn = Traversal.TraverseToNodePICAR(graph,path[i],car)
+		reachedTargetNode, DirectionToTurn = Traversal.TraverseToNodePICAR(graph,path[i],car)
 
-			#print(f"reached:{reachedTargetNode},Direction: {DirectionToTurn}, p[i]: {path[i]}")
+		#print(f"reached:{reachedTargetNode},Direction: {DirectionToTurn}, p[i]: {path[i]}")
 
-			if(reachedTargetNode):
-				print(f"Node {i} reached")
-				i += 1
+		if(reachedTargetNode):
+			print(f"Node {i} reached")
+			i += 1
+			move(rpi_chassis,'stop')
+		else:
+			#print(f"dir: {DirectionToTurn} car({car})")
+
+			if(DirectionToTurn == 'x'):
+				# move(rpi_chassis,'forward')
 				move(rpi_chassis,'stop')
-			else:
-				#print(f"dir: {DirectionToTurn} car({car})")
+			elif(DirectionToTurn == 'L'):
+				# move(rpi_chassis,'left')
+				move(rpi_chassis,'stop')
+			elif(DirectionToTurn == 'R'):
+				# move(rpi_chassis,'right')
+				move(rpi_chassis,'stop')
+			
+			nx,ny,na = updateCAR_CALCXY(DirectionToTurn,car)
 
-				if(DirectionToTurn == 'x'):
-					# move(rpi_chassis,'forward')
-					move(rpi_chassis,'stop')
-				elif(DirectionToTurn == 'L'):
-					# move(rpi_chassis,'left')
-					move(rpi_chassis,'stop')
-				elif(DirectionToTurn == 'R'):
-					# move(rpi_chassis,'right')
-					move(rpi_chassis,'stop')
-				
-				nx,ny,na = updateCAR_CALCXY(DirectionToTurn,car)
+			car.setLocation(nx,ny)
+			car.setAngle(na)
+			gx,gy,gz = get_gyrometer(angleData[0],angleData[1],angleData[2])
 
-				car.setLocation(nx,ny)
-				car.setAngle(na)
-				gx,gy,gz = get_gyrometer(angleData[0],angleData[1],angleData[2])
-
-				angleData[0] = gx
-				angleData[1] = gy
-				angleData[2] = gz
+			angleData[0] = gx
+			angleData[1] = gy
+			angleData[2] = gz
 
 
-				print(f"gz: {angleData[2]}")
+			print(f"gz: {angleData[2]}")
 
 
-				Globals.iterateTime()
-				time.sleep(0.2)
-	finally:
-		rpi_chassis = Picarx()
-		rpi_chassis.stop()
-		print("Exiting...")
-		exit()
+			Globals.iterateTime()
+			time.sleep(0.2)
+	# finally:
+	# 	rpi_chassis = Picarx()
+	# 	#rpi_chassis.stop()
+	# 	print("Exiting...")
+	# 	exit()
 
 				
 def ODinit():
