@@ -75,7 +75,7 @@ class Car:
     def getTurnDataPICAR(self, tX,tY): # takes in targetX and target y coords
         target_Angle = AngleFromAtoXY(self,tX,tY)
 
-        angleDifferential = target_Angle - self.angle
+        angleDifferential = fixAngle180(target_Angle - self.angle)
         dir = 'x'
 
         if(angleDifferential > 180):
