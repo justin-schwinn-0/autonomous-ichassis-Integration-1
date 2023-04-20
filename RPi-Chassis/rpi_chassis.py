@@ -273,7 +273,7 @@ def Calc_Angle(angle:float, direction):
 	newAngle = angle
 	angleDifferential = RL_TURNING_RATE * Globals.GetUpdateTime()
 
-	print(f"dA: {angleDifferential}")
+	print(f"A: {angle} dA: {angleDifferential} A' {newAngle}")
 
 	if(direction == 'L'):
 		newAngle += angleDifferential
@@ -383,7 +383,6 @@ def NavigationTest():
 			car.setAngle(Calc_Angle(car.angle,DirectionToTurn))
 			car.setLocation(nx,ny)
 
-			print(car)
 
 
 			Globals.iterateTime()
