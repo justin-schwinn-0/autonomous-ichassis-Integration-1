@@ -40,8 +40,6 @@ class Car:
     def getturnData(self, targetAngle): #L is left, x is no turn, R is right
         angleDiff = targetAngle - self.angle
 
-        angleDiff = fixAngle(angleDiff)
-
         absDiff = abs(angleDiff)
         dir = 0
         # L is left, x is no turn, R is right
