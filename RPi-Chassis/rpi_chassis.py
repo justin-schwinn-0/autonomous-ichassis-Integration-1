@@ -269,6 +269,9 @@ def turning_displacement_calc(x, y, angle_degrees, t, r, angular_velocity_degree
     # Return a tuple containing the new X and Y coordinates
 	return (new_x, new_y)
 
+def Calc_Angle(angle:float, angular_velocity = RL_TURNING_RATE):
+	return angle + angular_velocity * Globals.GetUpdateTime()
+
 def updateCAR_CALCXY(direction, car:Traversal.Car):
 	updateTime = Globals.GetUpdateTime()
 
@@ -331,7 +334,6 @@ def NavigationTest():
 	
 	#try:
 	path, graph, car, rpi_chassis = NavInit()
-	angleData = gyroinit()
 
 	curr_node = 0
 
@@ -369,15 +371,11 @@ def NavigationTest():
 			
 			nx,ny= updateCAR_CALCXY(DirectionToTurn,car)
 
+			car.setAngle(Calc_Angle(car.angle))
+
 			car.setLocation(nx,ny)
-			gx,gy,gz = get_gyrometer(angleData[0],angleData[1],angleData[2])
 
-			angleData[0] = gx
-			angleData[1] = gy
-			angleData[2] = gz
-
-
-			print(f"gz: {angleData[2]}")
+			print(car)
 
 
 			Globals.iterateTime()

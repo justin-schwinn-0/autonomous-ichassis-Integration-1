@@ -249,6 +249,10 @@ if __name__ == "__main__":
     c = Car()
     
 
+    for a in range(-180,361,10):
+        print(f"{a} to {fixAngle(a)}")
+
+
     i = 0
     while i < len(p):
         # p[] = path of nodes in order to reach the destination
