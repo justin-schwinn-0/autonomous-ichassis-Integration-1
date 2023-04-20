@@ -118,7 +118,7 @@ class Car:
         self.angle = fixAngle180(newAngle)
 
     def __str__(self) -> str:
-        return f"X:{self.X:2.5f} Y:{self.Y:2.5f} A:{self.angle:3.5f}"
+        return f"X:{self.X:2.4f} Y:{self.Y:2.4f} A:{self.angle:3.4f}"
 
 def Test1Nodes():
     a = Node('x',-2,0,"A")
