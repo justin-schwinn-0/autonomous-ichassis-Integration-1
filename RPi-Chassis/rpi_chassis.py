@@ -194,7 +194,7 @@ def get_gyrometer(gyro_x_angle, gyro_y_angle, gyro_z_angle):
 
 	print("gets new angles")
 	# Return our calculated angles
-	return (gyro_x_angle, gyro_y_angle, gyro_z_angle)
+	return gyro_x_angle, gyro_y_angle, gyro_z_angle
 
 # Returns the (x,y,z) coordinates of the magnetometer
 def get_magnetometer():
