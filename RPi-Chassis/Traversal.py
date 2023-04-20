@@ -250,7 +250,7 @@ if __name__ == "__main__":
     
 
     for a in range(-180,361,10):
-        print(f"{a} to {fixAngle(a)}")
+        print(f"{a} to {fixAngle(a)} sin(): {math.sin(math.radians(a))}")
 
 
     i = 0
