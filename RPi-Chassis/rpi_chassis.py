@@ -367,10 +367,9 @@ def NavigationTest():
 				# move(rpi_chassis,'right')
 				move(rpi_chassis,'stop')
 			
-			nx,ny,na = updateCAR_CALCXY(DirectionToTurn,car)
+			nx,ny= updateCAR_CALCXY(DirectionToTurn,car)
 
 			car.setLocation(nx,ny)
-			car.setAngle(na)
 			gx,gy,gz = get_gyrometer(angleData[0],angleData[1],angleData[2])
 
 			angleData[0] = gx
