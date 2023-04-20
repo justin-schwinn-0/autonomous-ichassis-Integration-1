@@ -386,7 +386,7 @@ def NavigationTest():
 
 
 				Globals.iterateTime()
-				time.sleep(0.5)
+				time.sleep(0.1)
 	finally:
 		rpi_chassis = Picarx()
 		rpi_chassis.stop()
