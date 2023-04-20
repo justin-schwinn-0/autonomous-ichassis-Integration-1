@@ -334,11 +334,13 @@ def Nav_Init():
 	path, graph = Traversal.MoveTestCase(3)
 
 
+	print("gets out of test case")
 	Traversal.Car.AngleTolerance = 7.5
 	Traversal.Car.NodeDistanceTolerance = .1
 
 
 	rpi_chassis = Picarx()
+	print("starts picar")
 
 	carData = Traversal.Car()
 	carData.setAngle(0)
