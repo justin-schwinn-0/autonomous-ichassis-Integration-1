@@ -376,7 +376,7 @@ def NavigationTest():
 					# move(rpi_chassis,'stop')
 				elif(DirectionToTurn == 'R'):
 					move(rpi_chassis,'right')
-					print(f"A {car.angle}")
+					print(f"A {car}")
 					# move(rpi_chassis,'stop')
 				
 				nx,ny= updateCAR_CALCXY(DirectionToTurn,car)
