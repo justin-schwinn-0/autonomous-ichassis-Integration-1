@@ -357,7 +357,7 @@ def NavigationTest():
 		i = 0
 		while i < len(path):
 
-			reachedTargetNode, DirectionToTurn = Traversal.TraverseToNodePICAR(graph,path[i],car)
+			reachedTargetNode, DirectionToTurn, dA = Traversal.TraverseToNodePICAR(graph,path[i],car)
 
 			#print(f"reached:{reachedTargetNode},Direction: {DirectionToTurn}, p[i]: {path[i]}")
 			
@@ -378,7 +378,7 @@ def NavigationTest():
 					move(rpi_chassis,'right')
 					# move(rpi_chassis,'stop')
 				
-				print(f"{car}\t{DirectionToTurn}")
+				print(f"{car}\t{DirectionToTurn}\t{dA}")
 				nx,ny= updateCAR_CALCXY(DirectionToTurn,car)
 
 				car.setAngle(Calc_Angle(car.angle,DirectionToTurn))
