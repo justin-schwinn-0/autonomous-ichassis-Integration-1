@@ -191,7 +191,6 @@ def get_gyrometer(gyro_x_angle, gyro_y_angle, gyro_z_angle):
 	gyro_z_angle += rate_z * updateTime
 
 	# Return our calculated angles
-	print(f"gz {gyro_z_angle}")
 	return gyro_x_angle, gyro_y_angle, gyro_z_angle
 
 # Returns the (x,y,z) coordinates of the magnetometer
@@ -268,7 +267,7 @@ def turning_displacement_calc(x, y, angle_degrees, t, r, angular_velocity_degree
 	new_y = y + r * (math.cos(angle) - math.cos(new_angle))
 
     # Return a tuple containing the new X and Y coordinates
-	return (new_x, new_y,new_angle)
+	return (new_x, new_y)
 
 def updateCAR_CALCXY(direction, car:Traversal.Car):
 	updateTime = Globals.GetUpdateTime()
@@ -374,10 +373,12 @@ def NavigationTest():
 				car.setAngle(na)
 				gx,gy,gz = get_gyrometer(angleData[0],angleData[1],angleData[2])
 
-				print("out of func")
 				angleData[0] = gx
 				angleData[1] = gy
 				angleData[2] = gz
+
+
+				print(f"gz: {angleData[2]}")
 
 
 				Globals.iterateTime()
