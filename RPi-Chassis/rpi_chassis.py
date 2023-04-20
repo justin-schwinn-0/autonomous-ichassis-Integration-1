@@ -341,57 +341,57 @@ def Nav_Init():
 
 def NavigationTest():
 	
-	#try:
-	path, graph, car, rpi_chassis = Nav_Init()
+	try:
+		path, graph, car, rpi_chassis = Nav_Init()
 
-	curr_node = 0
+		curr_node = 0
 
-	time.sleep(0.5)
-	print("Finished initializing Navigation")
-	
-	Globals.iterateTime()
-	Globals.iterateTime()
+		time.sleep(0.5)
+		print("Finished initializing Navigation")
+		
+		Globals.iterateTime()
+		Globals.iterateTime()
 
-	print(f"path:{path}")
+		print(f"path:{path}")
 
-	i = 0
-	while i < len(path):
+		i = 0
+		while i < len(path):
 
-		reachedTargetNode, DirectionToTurn = Traversal.TraverseToNodePICAR(graph,path[i],car)
+			reachedTargetNode, DirectionToTurn = Traversal.TraverseToNodePICAR(graph,path[i],car)
 
-		#print(f"reached:{reachedTargetNode},Direction: {DirectionToTurn}, p[i]: {path[i]}")
+			#print(f"reached:{reachedTargetNode},Direction: {DirectionToTurn}, p[i]: {path[i]}")
 
-		if(reachedTargetNode):
-			print(f"Node {i} reached")
-			i += 1
-			move(rpi_chassis,'stop')
-		else:
-			#print(f"dir: {DirectionToTurn} car({car})")
+			if(reachedTargetNode):
+				print(f"Node {i} reached")
+				i += 1
+				move(rpi_chassis,'stop')
+			else:
+				#print(f"dir: {DirectionToTurn} car({car})")
 
-			if(DirectionToTurn == 'x'):
-				move(rpi_chassis,'forward')
-				# move(rpi_chassis,'stop')
-			elif(DirectionToTurn == 'L'):
-				move(rpi_chassis,'left')
-				# move(rpi_chassis,'stop')
-			elif(DirectionToTurn == 'R'):
-				move(rpi_chassis,'right')
-				# move(rpi_chassis,'stop')
-			
-			nx,ny= updateCAR_CALCXY(DirectionToTurn,car)
+				if(DirectionToTurn == 'x'):
+					move(rpi_chassis,'forward')
+					# move(rpi_chassis,'stop')
+				elif(DirectionToTurn == 'L'):
+					move(rpi_chassis,'left')
+					# move(rpi_chassis,'stop')
+				elif(DirectionToTurn == 'R'):
+					move(rpi_chassis,'right')
+					# move(rpi_chassis,'stop')
+				
+				nx,ny= updateCAR_CALCXY(DirectionToTurn,car)
 
-			car.setAngle(Calc_Angle(car.angle,DirectionToTurn))
-			car.setLocation(nx,ny)
+				car.setAngle(Calc_Angle(car.angle,DirectionToTurn))
+				car.setLocation(nx,ny)
 
 
 
-			Globals.iterateTime()
-			time.sleep(0.5)
-	# finally:
-	# 	rpi_chassis = Picarx()
-	# 	#rpi_chassis.stop()
-	# 	print("Exiting...")
-	# 	exit()
+				Globals.iterateTime()
+				time.sleep(0.5)
+	finally:
+		rpi_chassis = Picarx()
+		#rpi_chassis.stop()
+		print("Exiting...")
+		exit()
 
 				
 def ODinit():
