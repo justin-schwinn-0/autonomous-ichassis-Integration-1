@@ -230,17 +230,17 @@ def TraverseToNodePICAR(graph:NavGraph,targetIndex:int,c:Car)->bool:
     targetAngle = AngleFromAToB(c,graph.Nodes[targetIndex])
     distanceToTarget = distanceFromAtoB(c,graph.Nodes[targetIndex])
     if distanceToTarget < Car.NodeDistanceTolerance: # reached node, return true
-        return True,None
+        return True,None,None
     else: 
         # turn the car if necessary
         # then move forward at a low speed if turning, higher if no turn
         direction, angleDelta = c.getturnData(targetAngle)
 
-        targetlocX, targetlocY = graph.Nodes[targetIndex].getLocation()
-        carLocX, carLocY = c.getLocation()
+        # targetlocX, targetlocY = graph.Nodes[targetIndex].getLocation()
+        # carLocX, carLocY = c.getLocation()
         #print(f"target: ({targetlocX:3.4f},{targetlocY:3.4f}) Car Location: ({carLocX:3.4f},{carLocY:3.4f}) Car angle: {c.angle:3.4f} angle Delta: {angleDelta:3.4f}")
 
-    return False,direction
+    return False,direction, angleDelta
 
 
 # python3 traversal.py starts here
