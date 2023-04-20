@@ -399,7 +399,8 @@ def NavigationTest():
 			time.sleep(0.05)
 
 	print("path complete!")
-	rpi_chassis.stop()
+	move(rpi_chassis,"stop")
+	
 	# finally:
 	# 	rpi_chassis = Picarx()
 	# 	rpi_chassis.stop()
