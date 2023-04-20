@@ -331,7 +331,7 @@ def Nav_Init():
 	path, graph = Traversal.MoveTestCase(2)
 
 
-	Traversal.Car.AngleTolerance = 10.0
+	Traversal.Car.AngleTolerance = 5.0
 	Traversal.Car.NodeDistanceTolerance = .1
 
 
