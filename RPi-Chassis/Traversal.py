@@ -45,7 +45,7 @@ def fixAngle180(angle):
 class Car:
     
     AngleTolerance = 10.0
-    NodeDistanceTolerance = 0.1
+    NodeDistanceTolerance = 0.05
     MaxTurn = 30                    # for testing purposes, not used on piccar
     TurningMoveSpeed = 0.1
     NormalSpeed = .4
