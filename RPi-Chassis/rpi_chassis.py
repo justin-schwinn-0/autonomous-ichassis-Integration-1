@@ -297,7 +297,6 @@ def updateCAR_CALCXY(direction, car:Traversal.Car):
 
 	if(direction == 'x'):
 		newX = displacement * math.cos(radianAngle) + car.X
-		print(f"{displacement} {math.cos(radianAngle)}")
 		newY = displacement * math.sin(radianAngle) + car.Y
 	elif(direction == 'L'):
 		newX,newY,= turning_displacement_calc(car.X,car.Y,car.angle,updateTime,RL_TURNING_CIRCLE_RADIUS,RL_TURNING_RATE)
@@ -389,7 +388,6 @@ def NavigationTest():
 				move(rpi_chassis,'right')
 				# move(rpi_chassis,'stop')
 			
-			print(f"{car}\t{DirectionToTurn} \t{dA:3.4f}")
 			nx,ny= updateCAR_CALCXY(DirectionToTurn,car)
 
 			car.setAngle(Calc_Angle(car.angle,DirectionToTurn))
