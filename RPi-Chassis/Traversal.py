@@ -115,7 +115,7 @@ class Car:
         self.Y = y
 
     def setAngle(self, newAngle):
-        self.angle = fixAngle(newAngle)
+        self.angle = fixAngle180(newAngle)
 
     def __str__(self) -> str:
         return f"X:{self.X:2.5f} Y:{self.Y:2.5f} A:{self.angle:3.5f}"
