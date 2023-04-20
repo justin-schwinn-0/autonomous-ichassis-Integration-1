@@ -328,7 +328,7 @@ def gyro_init():
 
 
 def Nav_Init():
-	path, graph = Traversal.turnTestCase(1)
+	path, graph = Traversal.MoveTestCase(2)
 
 
 	rpi_chassis = Picarx()
