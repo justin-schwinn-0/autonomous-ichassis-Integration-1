@@ -358,62 +358,62 @@ def Nav_Init():
 
 def NavigationTest():
 	
-	#try:
-	path, graph, car, rpi_chassis = Nav_Init()
+	try:
+		path, graph, car, rpi_chassis = Nav_Init()
 
-	curr_node = 0
+		curr_node = 0
 
-	time.sleep(0.5)
-	print("Finished initializing Navigation")
-	
-	Globals.iterateTime()
-	Globals.iterateTime()
-
-	print(f"path:{path}")
-
-	i = 0
-	while i < len(path):
-
-
-		if(Ultrasonic_PathStop(rpi_chassis)):
-			print("something in way")
-			move(rpi_chassis,"stop")
-			continue
-
-		reachedTargetNode, DirectionToTurn,dA = Traversal.TraverseToNodePICAR(graph,path[i],car)
+		time.sleep(0.5)
+		print("Finished initializing Navigation")
 		
-		if(reachedTargetNode):
-			print(f"Reached node {i}")
-			i += 1
+		Globals.iterateTime()
+		Globals.iterateTime()
 
-		else:
-			#print(f"dir: {DirectionToTurn} car({car})")
+		print(f"path:{path}")
 
-			if(DirectionToTurn == 'x'):
-				move(rpi_chassis,'forward')
-				# move(rpi_chassis,'stop')
-			elif(DirectionToTurn == 'L'):
-				move(rpi_chassis,'left')
-				# move(rpi_chassis,'stop')
-			elif(DirectionToTurn == 'R'):
-				move(rpi_chassis,'right')
-				# move(rpi_chassis,'stop')
+		i = 0
+		while i < len(path):
+
+
+			if(Ultrasonic_PathStop(rpi_chassis)):
+				print("something in way")
+				move(rpi_chassis,"stop")
+				continue
+
+			reachedTargetNode, DirectionToTurn,dA = Traversal.TraverseToNodePICAR(graph,path[i],car)
 			
-			nx,ny= updateCAR_CALCXY(DirectionToTurn,car)
+			if(reachedTargetNode):
+				print(f"Reached node {i}")
+				i += 1
 
-			car.setAngle(Calc_Angle(car.angle,DirectionToTurn))
-			car.setLocation(nx,ny)
+			else:
+				#print(f"dir: {DirectionToTurn} car({car})")
 
-			Globals.iterateTime()
-			time.sleep(0.1)
+				if(DirectionToTurn == 'x'):
+					move(rpi_chassis,'forward')
+					# move(rpi_chassis,'stop')
+				elif(DirectionToTurn == 'L'):
+					move(rpi_chassis,'left')
+					# move(rpi_chassis,'stop')
+				elif(DirectionToTurn == 'R'):
+					move(rpi_chassis,'right')
+					# move(rpi_chassis,'stop')
+				
+				nx,ny= updateCAR_CALCXY(DirectionToTurn,car)
 
-	print("path complete!")
-	move(rpi_chassis,"stop")
-	# finally:
-	# 	rpi_chassis = Picarx()
-	# 	rpi_chassis.stop()
-	# 	print("Exiting...")
-	# 	exit()
+				car.setAngle(Calc_Angle(car.angle,DirectionToTurn))
+				car.setLocation(nx,ny)
+
+				Globals.iterateTime()
+				time.sleep(0.1)
+
+		print("path complete!")
+		move(rpi_chassis,"stop")
+	finally:
+		rpi_chassis = Picarx()
+		rpi_chassis.stop()
+		print("Exiting...")
+		exit()
 
 				
 def ODinit():
