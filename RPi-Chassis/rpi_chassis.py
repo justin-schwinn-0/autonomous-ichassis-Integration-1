@@ -375,7 +375,7 @@ def NavigationTest():
 	while i < len(path):
 
 
-		if(not Ultrasonic_PathStop(rpi_chassis)):
+		if(Ultrasonic_PathStop(rpi_chassis)):
 			print("something in way")
 			continue
 
