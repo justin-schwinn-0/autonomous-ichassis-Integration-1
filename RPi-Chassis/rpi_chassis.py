@@ -377,6 +377,7 @@ def NavigationTest():
 
 		if(Ultrasonic_PathStop(rpi_chassis)):
 			print("something in way")
+			move(rpi_chassis,"stop")
 			continue
 
 		reachedTargetNode, DirectionToTurn,dA = Traversal.TraverseToNodePICAR(graph,path[i],car)
