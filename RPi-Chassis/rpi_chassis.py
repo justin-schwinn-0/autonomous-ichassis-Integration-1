@@ -393,7 +393,7 @@ def NavigationTest():
 				car.setAngle(Calc_Angle(car.angle,DirectionToTurn))
 				car.setLocation(nx,ny)
 
-
+#
 
 				Globals.iterateTime()
 				time.sleep(0.1)
