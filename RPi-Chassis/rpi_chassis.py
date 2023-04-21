@@ -77,7 +77,7 @@ def ultrasonic_detect(rpi_chassis, objects):
 
 	return objects
 
-def Ultrasonic_PathStop(rpichassis):
+def Ultrasonic_PathStop(rpi_chassis):
 	distance = rpi_chassis.ultrasonic.read()
 	print("Ultrasonic distance: " + str(distance))
 
