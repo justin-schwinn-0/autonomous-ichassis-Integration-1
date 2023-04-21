@@ -214,7 +214,6 @@ def DemoCase(index:int = 3):
 
     print("gets done with move test case")
 
-    path.append(0)
     return path,graph
 
 

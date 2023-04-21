@@ -330,7 +330,8 @@ def gyro_init():
 
 
 def Nav_Init():
-	path, graph = Traversal.DemoCase(1)
+	path, graph = Traversal.MoveTestCase(3)
+	path.append(0)
 
 
 	print("gets out of test case")
