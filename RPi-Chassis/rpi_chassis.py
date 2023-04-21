@@ -77,11 +77,11 @@ def ultrasonic_detect(rpi_chassis, objects):
 
 	return objects
 
-def Ultrasonic_PathStop(rpi_chassis):
+def Ultrasonic_PathStop(rpi_chassis) -> bool:
 	distance = rpi_chassis.ultrasonic.read()
 	print("Ultrasonic distance: " + str(distance))
 
-	return  distance < 30
+	return  bool(distance < 30)
 
 
 #This is a helper function to determine where an object is located 
@@ -376,6 +376,7 @@ def NavigationTest():
 
 
 		if(not Ultrasonic_PathStop(rpi_chassis)):
+			print("something in way")
 			continue
 
 		reachedTargetNode, DirectionToTurn,dA = Traversal.TraverseToNodePICAR(graph,path[i],car)
