@@ -152,8 +152,8 @@ def Test3Nodes():
 
 def test4Nodes():
     a = Node('x',0,0,"A")
-    b = Node('x',2.5,2,"B")
-    c = Node('x',2.5,0,"C")
+    b = Node('x',2.6,2,"B")
+    c = Node('x',2.6,0,"C")
     d = Node('x',2,1,"D")
     e = Node('x',6,2,"E")
     f = Node('x',6,0,"F")
