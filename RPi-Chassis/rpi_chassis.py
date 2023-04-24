@@ -484,7 +484,7 @@ def Nav2test():
 		i = 0
 		j = 0
 		for frame in rpi_camera.capture_continuous(raw_capture, format='bgr', use_video_port=True):
-
+			print("Setting image")
 			img = frame.array
 
 			# Our list of objects, each object is (True/False, Type, X_location, Y_location, size)
