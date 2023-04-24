@@ -492,9 +492,8 @@ def Nav2test():
 			goodToMove = True
 
 
-			for o in objects:
-				if(o[0]):
-					goodToMove = False
+			if(objects[0][0]):
+				goodToMove= False
 
 			if(goodToMove):
 				print("move!\n")
