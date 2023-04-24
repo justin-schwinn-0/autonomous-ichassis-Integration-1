@@ -371,6 +371,7 @@ def NavigationTest():
 		zero = 0
 
 		num = 1/zero
+
 		curr_node = 0
 
 		time.sleep(0.5)
@@ -412,8 +413,9 @@ def NavigationTest():
 			
 			Globals.iterateTime()
 			time.sleep(0.1)
-	except e:
-		print(e)
+	except:
+		print("exceptoin")
+		raise
 	finally:
 		rpi_chassis = Picarx()
 		rpi_chassis.stop()
