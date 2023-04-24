@@ -493,6 +493,7 @@ def Nav2test():
 
 
 			if(objects[0][0]):
+				print("can't move")
 				goodToMove= False
 
 			if(goodToMove):
