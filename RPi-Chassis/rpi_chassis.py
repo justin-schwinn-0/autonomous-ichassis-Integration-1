@@ -249,7 +249,6 @@ def move(rpi_chassis, direction, car:Traversal.Car):
 	car.setAngle(Calc_Angle(car.angle,direction))
 	car.setLocation(nx,ny)
 
-	print(f"{car}")
 
 
 
@@ -490,9 +489,6 @@ def Nav2test():
 			# Our list of objects, each object is (True/False, Type, X_location, Y_location, size)
 			objects = object_detection(rpi_chassis, img, detector)
 
-
-			print(objects)
-
 			goodToMove = True
 
 
@@ -509,8 +505,6 @@ def Nav2test():
 					i += 1
 
 				else:
-					print(f"dir: {DirectionToTurn} car({car})")
-
 					print(f"b4   {car}")
 					move(rpi_chassis, DirectionToTurn,car)
 					print(f"aftr {car}")
