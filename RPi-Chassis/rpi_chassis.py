@@ -380,9 +380,11 @@ def NavigationTest():
 		print(f"path:{path}")
 
 		i = 0
+		j = 0
 		for frame in rpi_camera.capture_continuous(raw_capture, format='bgr', use_video_port=True):
 
 			img = frame.array
+
 			# Our list of objects, each object is (True/False, Type, X_location, Y_location, size)
 			objects = object_detection(rpi_chassis, img, detector)
 
@@ -406,17 +408,21 @@ def NavigationTest():
 					i += 1
 
 				else:
-					#print(f"dir: {DirectionToTurn} car({car})")
+					print(f"dir: {DirectionToTurn} car({car})")
 
-					move(rpi_chassis, DirectionToTurn,car)
+					#move(rpi_chassis, DirectionToTurn,car)
 
 
 
 			print("path complete!")
-			move(rpi_chassis,'x',car)
+			#move(rpi_chassis,'x',car)
 			
 			Globals.iterateTime()
 			time.sleep(0.1)
+			print("I slept")
+			j += 1
+
+			print(f"{j}")
 	except Exception as e:
 		print(e)
 		raise
@@ -442,19 +448,19 @@ def ODinit():
 	# Create our rgb array for camera
 	raw_capture = PiRGBArray(rpi_camera, size=rpi_camera.resolution)
 	# Allow the camera to warm up
-	time.sleep(1)
+	time.sleep(2)
 	Globals.iterateTime()
 	Globals.iterateTime()
 	print("Finished initializing")
 	Globals.printTime()
 	# Our infinate loop for continuous object-detection and navigation
 	# Get continuous input from our camera, it is an infinate loop!
-	boption = core.BaseOptions(file_name='tf_lite_models/efficientdet_lite0.tflite', use_coral=True, num_threads=2)
+	boption = core.BaseOptions(file_name='tf_lite_models/efficientdet_lite0.tflite', use_coral=True, num_threads=4)
 	doption = processor.DetectionOptions(max_results=NUM_OBJECTS, score_threshold=0.6)
 	options = vision.ObjectDetectorOptions(base_options=boption, detection_options=doption)
 	detector = vision.ObjectDetector.create_from_options(options)
 
-	return raw_capture,detector, rpi_chassis, rpi_camera
+	return raw_capture, detector, rpi_chassis, rpi_camera
 
 def ODtest():
 		# This try helps smoothly stop the program (making sure to stop the car)
