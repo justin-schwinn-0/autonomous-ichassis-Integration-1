@@ -249,6 +249,8 @@ def move(rpi_chassis, direction, car:Traversal.Car):
 	car.setAngle(Calc_Angle(car.angle,direction))
 	car.setLocation(nx,ny)
 
+	print(f"{car}")
+
 
 
 
@@ -482,15 +484,12 @@ def Nav2test():
 		print(f"path:{path}")
 
 		i = 0
-		j = 0
 		for frame in rpi_camera.capture_continuous(raw_capture, format='bgr', use_video_port=True):
-			print("Setting image")
 			img = frame.array
 
 			# Our list of objects, each object is (True/False, Type, X_location, Y_location, size)
 			objects = object_detection(rpi_chassis, img, detector)
 
-			print(f"detected {len(objects)}")
 
 			print(objects)
 
@@ -512,17 +511,16 @@ def Nav2test():
 				else:
 					print(f"dir: {DirectionToTurn} car({car})")
 
+					print(f"b4   {car}")
 					move(rpi_chassis, DirectionToTurn,car)
+					print(f"aftr {car}")
 
 
 
 			
 			Globals.iterateTime()
 			time.sleep(0.1)
-			print("I slept")
-			j += 1
 
-			print(f"{j}")
 			raw_capture.truncate(0)
 
 			#end of loop
