@@ -497,7 +497,7 @@ def Nav2test():
 					goodToMove = False
 
 			if(goodToMove):
-
+				print("move!\n")
 				reachedTargetNode, DirectionToTurn,dA = Traversal.TraverseToNodePICAR(graph,path[i],car)
 				
 				if(reachedTargetNode):
