@@ -492,9 +492,14 @@ def Nav2test():
 			goodToMove = True
 
 
-			if(objects[0][0]):
-				print("can't move")
-				goodToMove= False
+			for o in objects:
+				is_object, type, x_loc, y_loc, width, height = o
+
+				if(is_object and (width > 100 and height > 200)):
+					
+					if(x_loc == "Right" or x_loc == "Left" or x_loc "Center"):
+						goodToMove = False
+
 
 			if(goodToMove):
 				print("move!\n")
