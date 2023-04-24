@@ -503,7 +503,7 @@ def Nav2test():
 						print(f"{type} is in the way!")
 						goodToMove = False
 				
-				print(f"exit OD with {goodToMove}")
+			print(f"exit OD with {goodToMove}")
 
 
 			if(goodToMove):
