@@ -500,12 +500,13 @@ def Nav2test():
 					print(f"found {type}")
 
 					if(x_loc == "Right" or x_loc == "Left" or x_loc =="Center"):
-						print("thing is a problem!")
+						print(f"{type} is in the way!")
 						goodToMove = False
+				
+				print(f"exit OD with {goodToMove}")
 
 
 			if(goodToMove):
-				print("move!\n")
 				reachedTargetNode, DirectionToTurn,dA = Traversal.TraverseToNodePICAR(graph,path[i],car)
 				
 				if(reachedTargetNode):
