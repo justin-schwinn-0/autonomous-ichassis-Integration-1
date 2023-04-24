@@ -489,20 +489,29 @@ def Nav2test():
 			# Our list of objects, each object is (True/False, Type, X_location, Y_location, size)
 			objects = object_detection(rpi_chassis, img, detector)
 
-			goodToMove = True
+			goodToMove = False
 
+
+			# for o in objects:
+			# 	is_object, type, x_loc, y_loc, width, height = o
+
+			# 	if(not is_object and not (width > 100 and height > 200)):
+					
+			# 		print(f"found {type}")
+
+			# 		if(x_loc == "Right" or x_loc == "Left" or x_loc =="Center"):
+			# 			print(f"{type} is in the way!")
+			# 			goodToMove = False
 
 			for o in objects:
+				
 				is_object, type, x_loc, y_loc, width, height = o
 
-				if(is_object and (width > 100 and height > 200)):
-					
-					print(f"found {type}")
+				if(is_object == False 
+       			  or (width < 100 and height < 200) or type not in AVOID_OBJECTS
+				  or x_loc == "Far Right" or x_loc == "Far Left"):
+					goodToMove = True
 
-					if(x_loc == "Right" or x_loc == "Left" or x_loc =="Center"):
-						print(f"{type} is in the way!")
-						goodToMove = False
-				
 			print(f"exit OD with {goodToMove}")
 
 
