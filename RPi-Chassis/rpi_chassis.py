@@ -672,6 +672,6 @@ if __name__ == "__main__":
 
 
 
-	Nav2test()
+	#Nav2test()
 
-	#ODtest()
+	ODtest()
