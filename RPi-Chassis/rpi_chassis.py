@@ -164,7 +164,7 @@ def object_detection(rpi_chassis, img, detector):
 	objects = camera_detect(img, objects, detector)
 
 	if len(objects) == 0:
-		objects.append((False, "Unknown", 0, 0, 0, 0))
+		objects.append((False, "none", 0, 0, 0, 0))
 	# Return the objects information
 	return objects
 
@@ -223,27 +223,32 @@ def navigation(objects, cur_coord, goalSpot):
 
 
 # This function moves the rpi_chassis given a direction, for example forward, left, right, backward, etc
-def move(rpi_chassis, direction):
+def move(rpi_chassis, direction, car:Traversal.Car):
 	# If the direction is stop
 
 	if direction == 'stop':
 		# Stop the chassis
 		rpi_chassis.stop()
-	elif direction == 'forward':
+		return
+	elif direction == 'x':
 		# Move the chassis forward
 		rpi_chassis.steer_straight()
 		rpi_chassis.forward(DEFAULT_SPEED)
-	elif direction == 'left':
+	elif direction == 'L':
 		# Move the chassis left
 		rpi_chassis.set_dir_servo_angle(-TURN_AMOUNT)
 		rpi_chassis.forward(DEFAULT_SPEED)
-	elif direction == 'right':
+	elif direction == 'R':
 		# Move the chassis right
 		rpi_chassis.set_dir_servo_angle(TURN_AMOUNT)
 		rpi_chassis.forward(DEFAULT_SPEED)
-	else:
-		# If any unknown direction is given ignore it
-		return
+	# If any unknown direction is given ignore it
+	
+	nx,ny= updateCAR_CALCXY(direction,car)
+
+	car.setAngle(Calc_Angle(car.angle,direction))
+	car.setLocation(nx,ny)
+
 
 
 
@@ -361,6 +366,9 @@ def NavigationTest():
 	try:
 		path, graph, car, rpi_chassis = Nav_Init()
 
+		raw_capture, detector,rpi_chassis, rpi_camera = ODinit()
+
+
 		curr_node = 0
 
 		time.sleep(0.5)
@@ -372,43 +380,31 @@ def NavigationTest():
 		print(f"path:{path}")
 
 		i = 0
-		while i < len(path):
+		for frame in rpi_camera.capture_continuous(raw_capture, format='bgr', use_video_port=True):
 
+			img = frame.array
+				# Our list of objects, each object is (True/False, Type, X_location, Y_location, size)
+			objects = object_detection(rpi_chassis, img, detector)
 
-			if(Ultrasonic_PathStop(rpi_chassis)):
-				print("something in way")
-				move(rpi_chassis,"stop")
-				continue
+			print(f"detected {len(objects)}")
 
-			reachedTargetNode, DirectionToTurn,dA = Traversal.TraverseToNodePICAR(graph,path[i],car)
-			
-			if(reachedTargetNode):
-				print(f"Reached node {i}")
-				i += 1
+			if(all(objects[0] == False)):
 
-			else:
-				#print(f"dir: {DirectionToTurn} car({car})")
-
-				if(DirectionToTurn == 'x'):
-					move(rpi_chassis,'forward')
-					# move(rpi_chassis,'stop')
-				elif(DirectionToTurn == 'L'):
-					move(rpi_chassis,'left')
-					# move(rpi_chassis,'stop')
-				elif(DirectionToTurn == 'R'):
-					move(rpi_chassis,'right')
-					# move(rpi_chassis,'stop')
+				reachedTargetNode, DirectionToTurn,dA = Traversal.TraverseToNodePICAR(graph,path[i],car)
 				
-				nx,ny= updateCAR_CALCXY(DirectionToTurn,car)
+				if(reachedTargetNode):
+					print(f"Reached node {i}")
+					i += 1
 
-				car.setAngle(Calc_Angle(car.angle,DirectionToTurn))
-				car.setLocation(nx,ny)
+				else:
+					#print(f"dir: {DirectionToTurn} car({car})")
 
-				Globals.iterateTime()
-				time.sleep(0.1)
+					move(rpi_chassis, DirectionToTurn,car)
+					Globals.iterateTime()
+					time.sleep(0.1)
 
-		print("path complete!")
-		move(rpi_chassis,"stop")
+			print("path complete!")
+			move(rpi_chassis,"stop")
 	finally:
 		rpi_chassis = Picarx()
 		rpi_chassis.stop()
@@ -526,9 +522,7 @@ def ODtest():
 				goal_coord = (0,0)
 		
 				'''
-				printTime()
 
-				printLog()
 
 				Globals.iterateTime()
 
