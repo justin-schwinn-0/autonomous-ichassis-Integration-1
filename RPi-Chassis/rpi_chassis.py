@@ -497,7 +497,10 @@ def Nav2test():
 
 				if(is_object and (width > 100 and height > 200)):
 					
+					print("found thing")
+
 					if(x_loc == "Right" or x_loc == "Left" or x_loc =="Center"):
+						print("thing is a problem!")
 						goodToMove = False
 
 
