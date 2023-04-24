@@ -390,7 +390,14 @@ def NavigationTest():
 
 			print(objects)
 
-			if(all(objects[0] == False)):
+			goodToMove = True
+
+
+			for o in objects:
+				if(o[0]):
+					goodToMove = False
+
+			if(goodToMove):
 
 				reachedTargetNode, DirectionToTurn,dA = Traversal.TraverseToNodePICAR(graph,path[i],car)
 				
