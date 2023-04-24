@@ -423,6 +423,7 @@ def NavigationTest():
 			j += 1
 
 			print(f"{j}")
+
 	except Exception as e:
 		print(e)
 		raise
@@ -432,7 +433,107 @@ def NavigationTest():
 		print("Exiting...")
 		exit()
 
+def Nav2test():
+	try:
+		path, graph, car, rpi_chassis = Nav_Init()
+
+
+
+		##################################
+
+		print("Starting RPi-Chassis")
+
+		# read the graph from file
+		
+		# Initialize the PicarX object for our RPi Chassis
+		rpi_chassis = Picarx()
+		# Initilize the Picamera object
+		rpi_camera = PiCamera()
+		# Set the camera's resolution and framerate
+		rpi_camera.resolution = (640,480) 	# Our camera can support other but at slower FPS
+		rpi_camera.framerate = 90			# Our camera can support 90 fps
+		# Create our rgb array for camera
+		raw_capture = PiRGBArray(rpi_camera, size=rpi_camera.resolution)
+		# Allow the camera to warm up
+		time.sleep(2)
+		Globals.iterateTime()
+		Globals.iterateTime()
+		print("Finished initializing")
+		Globals.printTime()
+		# Our infinate loop for continuous object-detection and navigation
+		# Get continuous input from our camera, it is an infinate loop!
+		boption = core.BaseOptions(file_name='tf_lite_models/efficientdet_lite0.tflite', use_coral=True, num_threads=4)
+		doption = processor.DetectionOptions(max_results=NUM_OBJECTS, score_threshold=0.6)
+		options = vision.ObjectDetectorOptions(base_options=boption, detection_options=doption)
+		detector = vision.ObjectDetector.create_from_options(options)
+
+		##################################
+
+		
+
+		curr_node = 0
+
+		time.sleep(0.5)
+		print("Finished initializing Navigation")
+		
+		Globals.iterateTime()
+		Globals.iterateTime()
+
+		print(f"path:{path}")
+
+		i = 0
+		j = 0
+		for frame in rpi_camera.capture_continuous(raw_capture, format='bgr', use_video_port=True):
+
+			img = frame.array
+
+			# Our list of objects, each object is (True/False, Type, X_location, Y_location, size)
+			objects = object_detection(rpi_chassis, img, detector)
+
+			print(f"detected {len(objects)}")
+
+			print(objects)
+
+			goodToMove = True
+
+
+			for o in objects:
+				if(o[0]):
+					goodToMove = False
+
+			if(goodToMove):
+
+				reachedTargetNode, DirectionToTurn,dA = Traversal.TraverseToNodePICAR(graph,path[i],car)
 				
+				if(reachedTargetNode):
+					print(f"Reached node {i}")
+					i += 1
+
+				else:
+					print(f"dir: {DirectionToTurn} car({car})")
+
+					#move(rpi_chassis, DirectionToTurn,car)
+
+
+
+			print("path complete!")
+			#move(rpi_chassis,'x',car)
+			
+			Globals.iterateTime()
+			time.sleep(0.1)
+			print("I slept")
+			j += 1
+
+			print(f"{j}")
+
+	except Exception as e:
+		print(e)
+		raise
+	finally:
+		rpi_chassis = Picarx()
+		rpi_chassis.stop()
+		print("Exiting...")
+		exit()
 def ODinit():
 	print("Starting RPi-Chassis")
 
@@ -571,6 +672,6 @@ if __name__ == "__main__":
 
 
 
-	NavigationTest()
+	Nav2test()
 
 	#ODtest()
