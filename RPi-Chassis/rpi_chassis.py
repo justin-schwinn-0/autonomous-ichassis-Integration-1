@@ -497,7 +497,7 @@ def Nav2test():
 
 				if(is_object and (width > 100 and height > 200)):
 					
-					if(x_loc == "Right" or x_loc == "Left" or x_loc "Center"):
+					if(x_loc == "Right" or x_loc == "Left" or x_loc =="Center"):
 						goodToMove = False
 
 
