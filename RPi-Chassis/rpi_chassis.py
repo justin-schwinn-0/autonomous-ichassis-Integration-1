@@ -158,7 +158,7 @@ def object_detection(rpi_chassis, img, detector):
 
 
 	# Update the object based on the ultrasonic sensor input
-	objects = ultrasonic_detect(rpi_chassis, objects)
+	#objects = ultrasonic_detect(rpi_chassis, objects)
 
 	# Check if the camera has detected an object
 	objects = camera_detect(img, objects, detector)
