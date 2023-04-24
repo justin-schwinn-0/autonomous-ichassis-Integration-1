@@ -388,6 +388,8 @@ def NavigationTest():
 
 			print(f"detected {len(objects)}")
 
+			print(objects)
+
 			if(all(objects[0] == False)):
 
 				reachedTargetNode, DirectionToTurn,dA = Traversal.TraverseToNodePICAR(graph,path[i],car)
@@ -431,6 +433,8 @@ def ODinit():
 	raw_capture = PiRGBArray(rpi_camera, size=rpi_camera.resolution)
 	# Allow the camera to warm up
 	time.sleep(1)
+	Globals.iterateTime()
+	Globals.iterateTime()
 	print("Finished initializing")
 	Globals.printTime()
 	# Our infinate loop for continuous object-detection and navigation
