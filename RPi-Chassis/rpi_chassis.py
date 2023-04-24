@@ -512,12 +512,10 @@ def Nav2test():
 				else:
 					print(f"dir: {DirectionToTurn} car({car})")
 
-					#move(rpi_chassis, DirectionToTurn,car)
+					move(rpi_chassis, DirectionToTurn,car)
 
 
 
-			print("path complete!")
-			#move(rpi_chassis,'x',car)
 			
 			Globals.iterateTime()
 			time.sleep(0.1)
@@ -527,6 +525,10 @@ def Nav2test():
 			print(f"{j}")
 			raw_capture.truncate(0)
 
+			#end of loop
+
+		print("path complete!")
+		move(rpi_chassis,'x',car)
 	except Exception as e:
 		print(e)
 		raise
