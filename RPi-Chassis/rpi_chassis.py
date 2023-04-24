@@ -525,6 +525,7 @@ def Nav2test():
 			j += 1
 
 			print(f"{j}")
+			raw_capture.truncate(0)
 
 	except Exception as e:
 		print(e)
