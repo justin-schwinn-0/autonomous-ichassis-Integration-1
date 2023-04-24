@@ -516,6 +516,9 @@ def Nav2test():
 					print(f"b4   {car}")
 					move(rpi_chassis, DirectionToTurn,car)
 					print(f"aftr {car}")
+			else:
+					move(rpi_chassis, "stop",car)
+
 
 
 
