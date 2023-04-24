@@ -383,7 +383,7 @@ def NavigationTest():
 		for frame in rpi_camera.capture_continuous(raw_capture, format='bgr', use_video_port=True):
 
 			img = frame.array
-				# Our list of objects, each object is (True/False, Type, X_location, Y_location, size)
+			# Our list of objects, each object is (True/False, Type, X_location, Y_location, size)
 			objects = object_detection(rpi_chassis, img, detector)
 
 			print(f"detected {len(objects)}")
@@ -400,11 +400,14 @@ def NavigationTest():
 					#print(f"dir: {DirectionToTurn} car({car})")
 
 					move(rpi_chassis, DirectionToTurn,car)
-					Globals.iterateTime()
-					time.sleep(0.1)
+
+
 
 			print("path complete!")
-			move(rpi_chassis,"stop")
+			move(rpi_chassis,'x',car)
+			
+			Globals.iterateTime()
+			time.sleep(0.1)
 	finally:
 		rpi_chassis = Picarx()
 		rpi_chassis.stop()
