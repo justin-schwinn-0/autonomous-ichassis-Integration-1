@@ -368,9 +368,6 @@ def NavigationTest():
 
 		raw_capture, detector,rpi_chassis, rpi_camera = ODinit()
 
-		zero = 0
-
-		num = 1/zero
 
 		curr_node = 0
 
