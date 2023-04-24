@@ -521,8 +521,6 @@ def Nav2test():
 
 			
 			Globals.iterateTime()
-			time.sleep(0.1)
-
 			raw_capture.truncate(0)
 
 			#end of loop
