@@ -766,6 +766,6 @@ if __name__ == "__main__":
 
 
 
-	()
+	Nav2test()
 
 	#ODtest()
