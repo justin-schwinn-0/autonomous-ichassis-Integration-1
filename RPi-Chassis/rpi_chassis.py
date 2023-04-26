@@ -264,11 +264,10 @@ def move(rpi_chassis, direction, car:Traversal.Car):
 		rpi_chassis.forward(DEFAULT_SPEED)
 	# If any unknown direction is given ignore it
 	
-	x,y = updateCAR_CALCXY(direction,car)
-	nA = car.angle+ RL_TURNING_RATE * Globals.GetUpdateTime()
+	nx,ny= updateCAR_CALCXY(direction,car)
 
-	car.setLocation(x,y)
-	car.setAngle(nA)
+	car.setAngle(Calc_Angle(car.angle,direction))
+	car.setLocation(nx,ny)
 
 
 
