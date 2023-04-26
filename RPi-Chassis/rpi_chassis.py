@@ -614,6 +614,9 @@ def NavigationTestOLD():
 
 		print("path complete!")
 		move(rpi_chassis,"stop")
+	except Exception as e:
+		print(e)
+		raise
 	finally:
 		rpi_chassis = Picarx()
 		rpi_chassis.stop()
