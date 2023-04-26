@@ -490,6 +490,7 @@ def Nav2test():
 			objects = object_detection(rpi_chassis, img, detector)
 
 			goodToMove = False
+			completedPath = False
 
 
 			# for o in objects:
@@ -512,7 +513,14 @@ def Nav2test():
 				  or x_loc == "Far Right" or x_loc == "Far Left"):
 					goodToMove = True
 
-			print(f"exit OD with {goodToMove}")
+
+			if(i > len(path)):
+				completedPath = True
+
+			if(completedPath):
+				break
+
+			goodToMove = True # temp for nva demo
 
 
 			if(goodToMove):
