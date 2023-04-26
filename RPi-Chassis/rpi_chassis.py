@@ -529,7 +529,7 @@ def Nav2test():
 			if(completedPath):
 				break
 
-			goodToMove = True # temp for nva demo
+			#goodToMove = True # temp for nva demo
 
 
 			if(goodToMove):
