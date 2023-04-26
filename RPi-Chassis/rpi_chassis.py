@@ -146,7 +146,27 @@ def camera_detect(img, objects, detector):
 			objects.append((True, obj_type, str(x), str(y), obj.bounding_box.width, obj.bounding_box.height))		
 	return objects
 
+def moveOld(rpi_chassis, direction):
+	# If the direction is stop
 
+	if direction == 'stop':
+		# Stop the chassis
+		rpi_chassis.stop()
+	elif direction == 'forward':
+		# Move the chassis forward
+		rpi_chassis.steer_straight()
+		rpi_chassis.forward(DEFAULT_SPEED)
+	elif direction == 'left':
+		# Move the chassis left
+		rpi_chassis.set_dir_servo_angle(-TURN_AMOUNT)
+		rpi_chassis.forward(DEFAULT_SPEED)
+	elif direction == 'right':
+		# Move the chassis right
+		rpi_chassis.set_dir_servo_angle(TURN_AMOUNT)
+		rpi_chassis.forward(DEFAULT_SPEED)
+	else:
+		# If any unknown direction is given ignore it
+		return
 
 def object_detection(rpi_chassis, img, detector):
 	#print("In object-detection")
@@ -489,18 +509,6 @@ def Nav2test():
 			goodToMove = False
 			completedPath = False
 
-
-			# for o in objects:
-			# 	is_object, type, x_loc, y_loc, width, height = o
-
-			# 	if(not is_object and not (width > 100 and height > 200)):
-					
-			# 		print(f"found {type}")
-
-			# 		if(x_loc == "Right" or x_loc == "Left" or x_loc =="Center"):
-			# 			print(f"{type} is in the way!")
-			# 			goodToMove = False
-
 			for o in objects:
 				
 				is_object, type, x_loc, y_loc, width, height = o
@@ -554,6 +562,64 @@ def Nav2test():
 		rpi_chassis.stop()
 		print("Exiting...")
 		exit()
+
+def NavigationTestOLD():
+	
+	try:
+		path, graph, car, rpi_chassis = Nav_Init()
+
+		curr_node = 0
+
+		time.sleep(0.5)
+		print("Finished initializing Navigation")
+		
+		Globals.iterateTime()
+		Globals.iterateTime()
+
+		print(f"path:{path}")
+
+		i = 0
+		while i < len(path):
+
+			reachedTargetNode, DirectionToTurn,dA = Traversal.TraverseToNodePICAR(graph,path[i],car)
+
+			#print(f"reached:{reachedTargetNode},Direction: {DirectionToTurn}, p[i]: {path[i]}")
+			
+			if(reachedTargetNode):
+				print(f"Reached node {i}")
+				i += 1
+
+			else:
+				#print(f"dir: {DirectionToTurn} car({car})")
+
+				if(DirectionToTurn == 'x'):
+					move(rpi_chassis,'forward')
+					# move(rpi_chassis,'stop')
+				elif(DirectionToTurn == 'L'):
+					move(rpi_chassis,'left')
+					# move(rpi_chassis,'stop')
+				elif(DirectionToTurn == 'R'):
+					move(rpi_chassis,'right')
+					# move(rpi_chassis,'stop')
+				
+				nx,ny= updateCAR_CALCXY(DirectionToTurn,car)
+
+				car.setAngle(Calc_Angle(car.angle,DirectionToTurn))
+				car.setLocation(nx,ny)
+
+
+
+				Globals.iterateTime()
+				time.sleep(0.1)
+
+		print("path complete!")
+		move(rpi_chassis,"stop")
+	finally:
+		rpi_chassis = Picarx()
+		rpi_chassis.stop()
+		print("Exiting...")
+		exit()
+
 def ODinit():
 	print("Starting RPi-Chassis")
 
@@ -692,6 +758,6 @@ if __name__ == "__main__":
 
 
 
-	Nav2test()
+	NavigationTestOLD()
 
 	#ODtest()
