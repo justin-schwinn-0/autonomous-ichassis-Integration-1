@@ -593,13 +593,13 @@ def NavigationTestOLD():
 				#print(f"dir: {DirectionToTurn} car({car})")
 
 				if(DirectionToTurn == 'x'):
-					move(rpi_chassis,'forward')
+					moveOld(rpi_chassis,'forward')
 					# move(rpi_chassis,'stop')
 				elif(DirectionToTurn == 'L'):
-					move(rpi_chassis,'left')
+					moveOld(rpi_chassis,'left')
 					# move(rpi_chassis,'stop')
 				elif(DirectionToTurn == 'R'):
-					move(rpi_chassis,'right')
+					moveOld(rpi_chassis,'right')
 					# move(rpi_chassis,'stop')
 				
 				nx,ny= updateCAR_CALCXY(DirectionToTurn,car)
