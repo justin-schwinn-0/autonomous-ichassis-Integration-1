@@ -264,7 +264,12 @@ def move(rpi_chassis, direction, car:Traversal.Car):
 		rpi_chassis.forward(DEFAULT_SPEED)
 	# If any unknown direction is given ignore it
 	
-	
+	x,y = updateCAR_CALCXY(direction,car)
+	nA = car.angle+ RL_TURNING_RATE * Globals.GetUpdateTime()
+
+	car.setLocation(x,y)
+	car.setAngle(nA)
+
 
 
 
@@ -761,6 +766,6 @@ if __name__ == "__main__":
 
 
 
-	Nav2test()
+	()
 
 	#ODtest()
