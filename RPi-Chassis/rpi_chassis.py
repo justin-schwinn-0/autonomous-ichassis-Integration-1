@@ -244,10 +244,7 @@ def move(rpi_chassis, direction, car:Traversal.Car):
 		rpi_chassis.forward(DEFAULT_SPEED)
 	# If any unknown direction is given ignore it
 	
-	nx,ny= updateCAR_CALCXY(direction,car)
-
-	car.setAngle(Calc_Angle(car.angle,direction))
-	car.setLocation(nx,ny)
+	
 
 
 
@@ -543,6 +540,7 @@ def Nav2test():
 			
 			Globals.iterateTime()
 			raw_capture.truncate(0)
+			time.sleep(0.1)
 
 			#end of loop
 
